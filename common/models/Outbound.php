@@ -76,6 +76,10 @@ use yii\web\UploadedFile;
  * @property string|null $f_flight_ticket
  * @property string|null $f_offer_letter
  * @property string|null $f_files
+ * @property string|null $f_certificate_attendance
+ * @property string|null $f_academic_transcript_host_university
+ * @property string|null $f_mobility_report
+ * @property string|null $f_travel_insurance
  * @property int|null $dean_id
  * @property int|null $hod_id
  * @property bool|null $agreement_accept
@@ -104,6 +108,11 @@ public $f_offer_letter_file;
 public $f_files_file;
 public $mobility_program_other;
 
+public $f_certificate_attendance_file;
+public $f_academic_transcript_host_university_file;
+public $f_mobility_report_file;
+public $f_travel_insurance_file;
+
 
 public $pic_id;
     /**
@@ -131,6 +140,7 @@ public $pic_id;
                     'host_university_name', 'host_university_country', 'credit_transform_availability', 'host_university_pic_name', 'host_university_pic_mobile_number', 'host_university_pic_email', 'host_university_pic_position', 'host_university_pic_country', 'host_university_pic_postcode', 'host_university_pic_address', 'host_scholarship',
                 ],'required', 'on' => 'creating'
             ],
+
             [['f_offer_letter_file'], 'required', 'when' => function($model) {
                 return empty($model->f_offer_letter);
             }, 'on' => 'creating'],
@@ -145,13 +155,27 @@ public $pic_id;
             }, 'on' => 'creating'],
 
             [['f_proof_sponsorship_file'], 'required', 'when' => function($model) {
-                return empty($model->f_proof_sponsorship);
+                return empty($model->f_proof_sponsorship) && $model->status === Variables::redirected_to_student_UPLOAD_files;
             }, 'on' => 'uploader'],
             [['f_proof_sponsorship_cover_file'], 'required', 'when' => function($model) {
-                return empty($model->f_proof_sponsorship_cover);
+                return empty($model->f_proof_sponsorship_cover) && $model->status === Variables::redirected_to_student_UPLOAD_files;
             }, 'on' => 'uploader'],
             [['f_letter_indemnity_file'], 'required', 'when' => function($model) {
-                return empty($model->f_letter_indemnity);
+                return empty($model->f_letter_indemnity) && $model->status === Variables::redirected_to_student_UPLOAD_files;
+            }, 'on' => 'uploader'],
+
+
+            [['f_certificate_attendance_file'], 'required', 'when' => function($model) {
+                return empty($model->f_certificate_attendance) && $model->status === Variables::application_reminder_sent;
+            }, 'on' => 'uploader'],
+            [['f_academic_transcript_host_university_file'], 'required', 'when' => function($model) {
+                return empty($model->f_academic_transcript_host_university) && $model->status === Variables::application_reminder_sent;
+            }, 'on' => 'uploader'],
+            [['f_mobility_report_file'], 'required', 'when' => function($model) {
+                return empty($model->f_mobility_report) && $model->status === Variables::application_reminder_sent;
+            }, 'on' => 'uploader'],
+            [['f_files_file'], 'required', 'when' => function($model) {
+                return empty($model->f_files) && $model->status === Variables::application_reminder_sent;
             }, 'on' => 'uploader'],
 
             [['status'], 'required', 'on' => 'actioner'],
@@ -244,6 +268,9 @@ public $pic_id;
             'f_letter_indemnity_file' => 'f_letter_indemnity',
             'f_flight_ticket_file' => 'f_flight_ticket',
             'f_offer_letter_file' => 'f_offer_letter',
+            'f_certificate_attendance_file' => 'f_certificate_attendance',
+            'f_academic_transcript_host_university_file' => 'f_academic_transcript_host_university',
+            'f_mobility_report_file' => 'f_mobility_report'
         ];
 
         foreach ($files as $fileAttr => $dbAttr) {
@@ -378,7 +405,12 @@ public $pic_id;
             'f_letter_indemnity_file' => 'Letter Indemnity',
             'f_flight_ticket_file' => 'Flight Ticket',
             'f_offer_letter_file' => 'Offer Letter',
+            'f_travel_insurance_file' => 'Travel Insurance Cover Note',
+            
             'f_files_file' => 'Upload photos and videos',
+            'f_certificate_attendance_file' => 'Certificate of Attendance',
+            'f_academic_transcript_host_university_file' => 'Academic Transcript from Host University',
+            'f_mobility_report_file' => 'Mobility Report',
 
             'dean_id' => 'Dean ID',
             'hod_id' => 'Hod ID',

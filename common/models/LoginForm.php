@@ -32,6 +32,14 @@ class LoginForm extends Model
         ];
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['backend'] = ['username', 'password', 'rememberMe']; // Define the backend scenario
+        $scenarios['frontend'] = ['username', 'password', 'rememberMe']; // Define the frontend scenario
+        return $scenarios;
+    }
+
     /**
      * Validates the password.
      * This method serves as the inline validation for password.
@@ -57,9 +65,22 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+            $user = $this->getUser();
+
+
+            if ($this->scenario === 'backend' &&
+                (Yii::$app->authManager->checkAccess($user->id, 'admin') || Yii::$app->authManager->checkAccess($user->id, 'staff'))) {
+                return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+            }
+
+            if ($this->scenario === 'frontend' &&
+                (Yii::$app->authManager->checkAccess($user->id, 'inbound') || Yii::$app->authManager->checkAccess($user->id, 'outbound'))) {
+                return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+            }
+
+            return false;
         }
-        
+
         return false;
     }
 

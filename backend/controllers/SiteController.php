@@ -59,11 +59,11 @@ class SiteController extends Controller
     /**
      * Displays homepage.
      *
-     * @return string
+     * @return Response
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->redirect('/dashboard/idashboard');
     }
 
     /**
@@ -80,6 +80,7 @@ class SiteController extends Controller
         $this->layout = 'blank';
 
         $model = new LoginForm();
+        $model->scenario = 'backend';
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
@@ -90,6 +91,7 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
 
     public function actionSignup()
     {

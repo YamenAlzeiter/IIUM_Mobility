@@ -72,7 +72,7 @@ AppAsset::register($this);
         }elseif (Yii::$app->user->can('outbound')){
             $menuItems = [['url' => 'outbound/index', 'icon' => 'ti ti-layout-dashboard fs-7', 'optionTitle' => 'outbound']];
         }
-
+        $menuItems[] = ['url' => 'site/faq', 'icon' => 'ti ti-help-hexagon fs-7', 'optionTitle' => 'FAQ'];
 
         echo SidebarV2::widget([
             'items' => $menuItems,

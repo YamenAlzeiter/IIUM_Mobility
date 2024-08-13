@@ -52,6 +52,21 @@ class InboundSearch extends Inbound
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+            'sort' => [
+                'attributes' => [
+                    'status' => [
+                        'asc' => ['FIELD(status, 10, 15, 35, 55, 75)' => SORT_ASC],
+//                        'desc' => ['FIELD(status, 10, 11, 31, 51, 71)' => SORT_DESC],
+                    ],
+                    // Add other attributes if needed
+                ],
+                'defaultOrder' => [
+                    'status' => SORT_DESC, // Default sorting by status, with specified statuses on top
+                ],
+            ],
         ]);
 
         $this->load($params);
@@ -75,9 +90,11 @@ class InboundSearch extends Inbound
         if ($this->applications === 'new_applications') {
             $query->andWhere(['not in', 'status', [65,85]]);
         } elseif ($this->applications === 'active_applications') {
-            $query->andWhere(['OR', ['status' => 100], ['status' => 91]]);
+            $query->andWhere(['OR', ['status' => 65]]);
         } elseif ($this->applications === 'expired_applications') {
-            $query->andWhere(['OR', ['status' => 102], ['status' => 92]]);
+            $query->andWhere(['OR', ['status' => 85]]);
+        } elseif ($this->applications === 'rejected_applications'){
+            $query->andWhere(['OR', ['status' => 6]]);
         }
 
         if ($this->year) {

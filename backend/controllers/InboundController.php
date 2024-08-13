@@ -6,6 +6,7 @@ use common\helpers\Variables;
 use common\models\EmailTemplates;
 use common\models\Inbound;
 use common\models\InboundHostUniversityCourses;
+use common\models\InboundLog;
 use common\models\Kcdio;
 use common\models\Pic;
 use common\models\search\InboundSearch;
@@ -22,6 +23,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * InboundController implements the CRUD actions for Inbound model.
@@ -106,25 +108,18 @@ class InboundController extends Controller
 
     }
 
-    /**
-     * Creates a new Inbound model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new Inbound();
+    public function actionLog($id){
+        $logsDataProvider = new ActiveDataProvider([
+            'query' => InboundLog::find()->where(['inbound_id' => $id]),
+            'pagination' => ['pageSize' => 100,],
+            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC], // Display logs by creation time in descending order
+            ],]);
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
+        $logModel = Inbound::findOne($id);
 
-        return $this->render('create', [
-            'model' => $model,
+        return $this->renderAjax('log', [
+            'logsDataProvider' => $logsDataProvider,
+            'logModel' => $logModel
         ]);
     }
 
@@ -170,14 +165,6 @@ class InboundController extends Controller
             // Set application ID for new courses
             foreach ($modelsCourses as $modelCourse) {
                 $modelCourse->application_id = $model->id;
-            }
-
-            // Handle save/update based on button clicked
-            if ($this->request->post('saving')) {
-                $model->status = null;
-            } else if ($this->request->post('creating')) {
-                $model->scenario = 'creating';
-                $model->status = Variables::application_init;
             }
 
             if($model->language_english_test_name == 'Other'){
@@ -236,19 +223,7 @@ class InboundController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing Inbound model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
-    }
 
     public function actionAction($id)
     {
@@ -258,6 +233,8 @@ class InboundController extends Controller
             $model->scenario = 'actioner';
 
             if ($this->request->isPost && $model->load($this->request->post())) {
+
+                $model->file_mail = UploadedFile::getInstance($model, 'file_mail');
                 $model->temp = "(" . Yii::$app->user->identity->type . ") " . "(" . Yii::$app->user->identity->email . ") " . Yii::$app->user->identity->username;
 
                 // Setting token
@@ -301,15 +278,16 @@ class InboundController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function sendEmail($model){
-
+    public function sendEmail($model)
+    {
         $emailTemplateMap = [
-            Variables::application_redirected_kcdio_inbound => Variables::requestHodSignatureOutBound,
-            Variables::application_resubmitted_to_kcdio_inbound => Variables::requestHodSignatureOutBound,
-            Variables::application_redirected_amad_inbound => Variables::requestDeanSignatureOutBound,
-            Variables::application_rejected_inbound => Variables::rejectedApplicationOutBound,
-            Variables::application_redirected_upload_inbound => Variables::requestUploadDocsOutBound,
-            Variables::application_files_not_complete_inbound => Variables::uploadedFilesNotComplete,
+            Variables::application_redirected_kcdio_inbound => Variables::requestDeanSignatureInBound,
+            Variables::application_resubmitted_to_kcdio_inbound => Variables::requestDeanSignatureInBound,
+            Variables::application_redirected_amad_inbound => Variables::requestOfferLetterInBound,
+            Variables::application_rejected_inbound => Variables::rejectedApplicationInBound,
+            Variables::application_redirected_upload_inbound => Variables::requestUploadProofOfPayment,
+            Variables::application_files_not_complete_inbound => Variables::incompleteApplicationInBound,
+            Variables::application_not_complete_inbound => Variables::incompleteApplicationInBound,
             Variables::application_accepted_inbound => Variables::applicationActive,
         ];
 
@@ -326,36 +304,38 @@ class InboundController extends Controller
         $body = str_replace('{reason}', $model->reason, $body);
         $body = str_replace('{applicant}', $model->name, $body);
 
+        // First condition: sending email to a specific user with a link
+        if (!in_array($model->status, [
+            Variables::application_rejected_inbound,
+            Variables::application_redirected_upload_inbound,
+            Variables::application_files_not_complete_inbound,
+            Variables::application_not_complete_inbound,
+            Variables::application_accepted_inbound,
+        ])) {
 
-        if(
-            !in_array($model->status,
-                [
-                    Variables::application_rejected,
-                    Variables::redirected_to_student_UPLOAD_files,
-                    Variables::application_files_not_complete,
-                    Variables::application_accepted,
-                ]
-            )
-        ){
             $user = Pic::findOne($userMap[$model->status]);
-            $link =  Yii::$app->urlManager->createAbsoluteUrl(['workflowi/index', 'id' => $model->id, 'token' => $model->token]);
+            $link = Yii::$app->urlManager->createAbsoluteUrl(['workflowi/index', 'id' => $model->id, 'token' => $model->token]);
 
             $body = str_replace('{user}', $user->name, $body);
             $body = str_replace('{link}', $link, $body);
-            $mailer = Yii::$app->mailer
-                ->compose(['html' => '@backend/views/email/emailTemplate.php'],
-                    [
-                        'subject' => $template->subject,
-                        'recipientName' => $user->name,
-                        'reason' => $model->reason,
-                        'applicant' => $model->name,
-                        'link' => $link,
-                        'body' => $body,
-                    ])
-                ->setFrom(['noReplay@iium.edy.my' => 'IIUM'])
+
+            $mailer = Yii::$app->mailer->compose(['html' => '@backend/views/email/emailTemplate.php'], [
+                'subject' => $template->subject,
+                'recipientName' => $user->name,
+                'reason' => $model->reason,
+                'link' => $link,
+                'body' => $body,
+            ])
+                ->setFrom(['noReply@iium.edy.my' => 'IIUM'])
                 ->setTo($user->email)
                 ->setSubject($template->subject);
 
+            // Attach the uploaded file if it exists
+            if ($model->file_mail) {
+                $mailer->attach($model->file_mail->tempName, ['fileName' => $model->file_mail->name]);
+            }
+
+            // Handle CC emails
             $ccEmails = [];
             if (!empty($user->{"email_cc_x"})) {
                 $ccEmails[] = $user->{"email_cc_x"};
@@ -366,23 +346,31 @@ class InboundController extends Controller
             if (!empty($ccEmails)) {
                 $mailer->setCc($ccEmails);
             }
-        }else{
-            $mailer = Yii::$app->mailer
-                ->compose(['html' => '@backend/views/email/emailTemplate.php'],
-                    [
-                        'subject' => $template->subject,
-                        'reason' => $model->reason,
-                        'applicant' => $model->name,
-                        'body' => $body,
-                    ])
-                ->setFrom(['noReplay@iium.edy.my' => 'IIUM | Exchange Program'])
+        }
+        // Second condition: sending email directly to the applicant
+        else {
+            $body = str_replace('{user}', $model->name, $body);
+            $body = str_replace('{reason}', $model->reason, $body);
+
+            $mailer = Yii::$app->mailer->compose(['html' => '@backend/views/email/emailTemplate.php'], [
+                'subject' => $template->subject,
+                'reason' => $model->reason,
+                'applicant' => $model->name,
+                'body' => $body,
+            ])
+                ->setFrom(['noReply@iium.edy.my' => 'IIUM | Exchange Program'])
                 ->setTo($model->email)
                 ->setSubject($template->subject);
+
+            // Attach the uploaded file if it exists
+            if ($model->file_mail) {
+                $mailer->attach($model->file_mail->tempName, ['fileName' => $model->file_mail->name]);
+            }
         }
 
         $mailer->send();
-
     }
+
     public function actionGetPic($id) {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $pic = Pic::find()
@@ -400,7 +388,7 @@ class InboundController extends Controller
 
     public function actionDownloader($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/inbound_application_') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/inbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (!file_exists($fullPath)) {
@@ -412,9 +400,9 @@ class InboundController extends Controller
         }
     }
 
-    public function actionDownload($filePath)
+    public function actionDownload($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/inbound_application_') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/inbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (file_exists($fullPath)) {
@@ -424,20 +412,35 @@ class InboundController extends Controller
         }
     }
 
+    /**
+     * Deletes an existing Inbound model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $id ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
     public function actionBulkDelete()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $ids = Yii::$app->request->post('ids', []);
+
         if (empty($ids)) {
             return ['success' => false, 'message' => 'No items selected.'];
         }
 
         foreach ($ids as $id) {
+            Yii::error("Processing deletion for ID: $id", __METHOD__);
             $model = $this->findModel($id);
             if ($model !== null) {
                 // Delete associated files
-                $folderPath = Yii::getAlias('@common/uploads/' . $id);
+                $folderPath = Yii::getAlias('@common/uploads/inbound_application_' . $id);
                 if (is_dir($folderPath)) {
                     $this->deleteDirectory($folderPath);
                 }
@@ -448,6 +451,32 @@ class InboundController extends Controller
         }
 
         return ['success' => true, 'message' => 'Selected items have been deleted.'];
+    }
+    protected function deleteDirectory($dir)
+    {
+        if (!file_exists($dir)) {
+            return true;
+        }
+
+        if (!is_dir($dir) || is_link($dir)) {
+            return unlink($dir);
+        }
+
+        foreach (scandir($dir) as $item) {
+            if ($item == '.' || $item == '..') {
+                continue;
+            }
+
+            if (!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+                chmod($dir . DIRECTORY_SEPARATOR . $item, 0777);
+
+                if (!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+                    return false;
+                }
+            }
+        }
+
+        return rmdir($dir);
     }
 
     public function actionExportExcel($year)

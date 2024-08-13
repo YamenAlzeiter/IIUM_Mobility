@@ -61,8 +61,8 @@ $attribute =  in_array($model->status, [Variables::application_init, Variables::
 
 <?php $form = ActiveForm::begin([
     'id' => 'create-form',
-    'enableClientValidation' => true, // Enable client-side validation
-]); ?>
+    'enableClientValidation' => true,
+    'options' => ['enctype' => 'multipart/form-data']]); ?>
 
 <?php $form->field($model, 'status')->radioList([], ['class' => 'gap-2 row'])->label(false);?>
 <?= $form->field($model, 'status')->radioList(
@@ -87,7 +87,7 @@ $attribute =  in_array($model->status, [Variables::application_init, Variables::
     ]
 )->label(false); ?>
 
-<?php if(in_array($model->status, [Variables::application_init, Variables::application_resubmitted, Variables::application_accepted_hod])):?>
+<?php if(in_array($model->status, [Variables::application_init, Variables::application_resubmitted_inbound, Variables::application_accepted_kcdio_inbound])):?>
 
     <div class="redirected d-none">
         <?= $form->field($model, 'pic_id')->dropDownList(ArrayHelper::map(Kcdio::find()->all(), 'id', 'kcdio'), [
@@ -123,7 +123,7 @@ $attribute =  in_array($model->status, [Variables::application_init, Variables::
         ]
     ])->label(false) ?>
 </div>
-
+<?= $form->field($model, 'file_mail')->fileInput()?>
 <?php ?>
 
 <div class="text-end">

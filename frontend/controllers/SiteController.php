@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use app\models\Faq;
+use common\models\search\FaqSearch;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -76,7 +78,16 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $this->layout ='blank';
-        return $this->render('index');
+        if(!Yii::$app->user->isGuest){
+            if (Yii::$app->user->can('inbound')) {
+                return $this->redirect(['inbound/index']);
+            } elseif (Yii::$app->user->can('outbound')) {
+                return $this->redirect(['outbound/index']);
+            }
+        }
+        else{
+            return $this->render('index');
+        }
     }
 
     /**
@@ -91,6 +102,7 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
+        $model->scenario = 'frontend';
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             if (Yii::$app->user->can('inbound')) {
                 return $this->redirect(['inbound/index']);
@@ -140,6 +152,19 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+    public function actionFaq()
+    {
+        $this->layout = 'blank';
+        $searchModel = new FaqSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('faq', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+
 
     /**
      * Displays about page.

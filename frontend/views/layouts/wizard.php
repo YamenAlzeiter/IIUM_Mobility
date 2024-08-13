@@ -23,9 +23,6 @@ wizard::register($this);
 
         <script src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src = "https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src = "https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
-
 
         <link rel="shortcut icon" type="image/png" href="https://style.iium.edu.my/images/iium/iium-logo.png">
 
@@ -43,6 +40,7 @@ wizard::register($this);
 
     <?php
         if(Yii::$app->user->can('inbound')){
+            $terms = "<ul><li>I hereby declare that all the information provided in this application form is true, accurate, and complete in every detail. I acknowledge that the International Islamic University Malaysia (IIUM) reserves the right to amend or revoke any decision regarding my admission or enrolment based on incorrect or incomplete information provided by me.</li><li>I am also aware that my personal details are protected under the Personal Data Protection Act 2010 (PDPA) and will be handled in accordance with the law's provisions. I understand the conditions related to my application and admission, and I agree to pay all applicable fees for which I am responsible. By signing this declaration, I confirm my acceptance of these terms and conditions.</li></ul>";
             $steps = [
                 ['number' => 1, 'label' => 'Personal Information'],
                 ['number' => 2, 'label' => 'Emergency Contact'],
@@ -53,6 +51,7 @@ wizard::register($this);
                 ['number' => 7, 'label' => 'Application Checklist'],
             ];
         }else if(Yii::$app->user->can('outbound')){
+            $terms = "<ul><li>I hereby declare that all the information provided in this application form is true, accurate, and complete in every detail. I acknowledge that the International Islamic University Malaysia (IIUM) reserves the right to amend or revoke any decision regarding my admission or enrolment based on incorrect or incomplete information provided by me.</li><li>I am also aware that my personal details are protected under the Personal Data Protection Act 2010 (PDPA) and will be handled in accordance with the law's provisions. I understand the conditions related to my application and admission, and I agree to pay all applicable IIUM fees for which I am responsible, including but not limited to those listed in my financial statement. By signing this declaration, I confirm my acceptance of these terms and conditions.</li></ul>";
             $steps = [
                 ['number' => 1, 'label' => 'Personal Information'],
                 ['number' => 2, 'label' => 'Emergency Contact'],
@@ -73,7 +72,7 @@ wizard::register($this);
     <?php Modal::begin([
         'title' => '',
         'id' => 'modal',
-        'size' => 'modal-xl',
+        'size' => 'modal-lg',
         'bodyOptions' => ['class' =>'modal-inner-padding-body mt-0'],
         'headerOptions' => ['class' => 'modal-inner-padding justify-content-between'],
         'centerVertical' => true,
@@ -81,7 +80,9 @@ wizard::register($this);
         'footer' =>  '&nbsp;',
     ]);
 
-    echo "<div id='modalContent'></div>";
+    echo "<div id='modalContent'>
+            $terms
+            </div>";
 
     Modal::end();
 

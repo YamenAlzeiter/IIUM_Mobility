@@ -185,15 +185,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <h2 class="d-flex text-color-dark fw-bolder align-items-center gap-2"><i class="ti ti-file fw-bolder fs-9"></i> Files</h2>
                     <hr>
-                    <?= $view->downloadLinkBuilderToken($model->f_language_english_certificate, 'English Certificate') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_recommendation_letter, 'Recommendation Letter') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_passport, 'Passport') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_latest_passport_photo, 'Passport Photo') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_latest_academic_transcript, 'Academic Transcript') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_confirmation_letter, 'Confirmation Letter') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_sponsorship_letter, 'Sponsorship Letter') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_offer_letter, 'Offer Letter') ?>
-                    <?= $view->downloadLinkBuilderToken($model->f_proof_of_payment, 'Proof of Payment') ?>
+                    <?= $view->downloadLinkBuilder($model->f_language_english_certificate, 'English Certificate', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_passport, 'Passport Information Page', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_latest_passport_photo, 'Passport Photo', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_latest_academic_transcript, 'Full Academic Transcript', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_sponsorship_letter, 'Official Letter of Sponsorship ', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_recommendation_letter, 'Recommendation Letter', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_academic_study_plan, 'Study Plan', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_confirmation_letter, 'Confirmation Letter', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_offer_letter, 'Offer Letter', $model->id) ?>
+                    <?= $view->downloadLinkBuilder($model->f_proof_of_payment, 'Proof of Payment', $model->id) ?>
                 </div>
             </div>
         </div>

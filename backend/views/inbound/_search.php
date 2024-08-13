@@ -36,9 +36,9 @@ $years = array_filter(array_unique(array_merge($yearsStart, $yearsEnd)));
     <?php
     echo $form->field($model, 'applications')->radioList([
         'all' => 'All',
-        'new_applications' => 'New Applications',
         'active_applications' => 'Active Applications',
-        'expired_applications' => 'Expired Applications'
+        'expired_applications' => 'Expired Applications',
+        'rejected_applications' => 'Rejected Applications'
     ], [
         'class' => 'row',
         'item' => function ($index, $label, $name, $checked, $value) {

@@ -14,7 +14,7 @@ class m240703_191618_create_email_templates_table extends Migration
     {
         $this->createTable('{{%email_templates}}', [
             'id' => $this->primaryKey(),
-            'subject' => $this->string(522),
+            'subject' => $this->string(225),
             'body' => $this->text(),
         ]);
         $this->insert('{{%email_templates}}', ['id' => 1 ,

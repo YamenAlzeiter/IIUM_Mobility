@@ -12,7 +12,7 @@ class builders
     {
         switch ($viewer) {
             case 'inbound'         :
-                return in_array($status, [10, 15, 35, 55, 75]);
+                return in_array($status, [10, 15, 16, 35, 55, 75]);
             case 'outbound'     :
                 return in_array($status, [10, 11, 12, 31, 32, 51, 71]);
             default: return null;

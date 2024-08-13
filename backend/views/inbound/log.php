@@ -20,7 +20,7 @@ use yii\widgets\Pjax;?>
                     'attribute' => 'created_at', 'label' => 'Date', 'format' => ['date', 'php:d/M/y'],
                     'enableSorting' => false,
                 ], [
-                    'label' => 'Current Status', 'format' => 'raw',       'value' => function ($model) {
+                    'label' => 'Current Status', 'format' => 'raw', 'value' => function ($model) {
                         $statusHelper = new StatusPillMaker();
                         return $statusHelper->pillBuilder($model->new_status);
                     }, 'contentOptions' => ['class' => 'col-1 text-start'],

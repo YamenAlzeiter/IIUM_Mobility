@@ -28,6 +28,7 @@
 
     --body-font: 'Poppins','Nunito', sans-serif;
     --normal-font-size: 1rem;
+    --smaller-font-size: 1em;
     --z-fixed: 100;
 
     --pill-border-radius: 7px;
@@ -60,7 +61,7 @@ a {
     letter-spacing: 2px;
 }
 .pill {
-    font-size: var(--normal-font-size);
+    font-size: var(--smaller-font-size);
     font-weight: var(--pill-font-weight);
     padding: var(--pill-padding);
     border-radius: var(--pill-border-radius);
@@ -177,7 +178,7 @@ a {
 }
 .nav__name{
     opacity: 1;
-    display: block;
+    display: none;
     transition: all .5s;
 }
 .collapse-sidenav .nav__link .nav__name,
@@ -352,7 +353,9 @@ a {
         left: 0;
         padding: 1rem 1rem 0 0;
     }
-
+    .nav__name{
+        display: block;
+    }
 
     .show-sidenav {
         width: calc(var(--nav-width) + 180px);
@@ -388,6 +391,14 @@ a {
     border-top: 1px black solid;
     border-bottom: 1px black solid;
 }
+
+.table-striped > tbody > tr > td {
+    border-top: 1px black solid;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px black solid;
+}
+
 
 .table-header-flex > thead > tr > th > a {
     display: flex;

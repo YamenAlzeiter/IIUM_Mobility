@@ -24,7 +24,6 @@ AppAsset::register($this);
         <meta charset = "<?= Yii::$app->charset ?>">
 
         <script src = "https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src = "https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 
@@ -85,6 +84,7 @@ AppAsset::register($this);
             $menuItems[] = ['url' => 'user/index', 'icon' => 'ti ti-user-circle fs-7', 'optionTitle' => 'Users'];
             $menuItems[] = ['url' => 'email-template/index', 'icon' => 'ti ti-mail fs-7', 'optionTitle' => 'Email Templates'];
             $menuItems[] = ['url' => 'status/index', 'icon' => 'ti ti-status-change fs-7', 'optionTitle' => 'Status'];
+            $menuItems[] = ['url' => 'faq/index', 'icon' => 'ti ti-help-hexagon fs-7',  'optionTitle' => 'FAQ'];
         }
 
 

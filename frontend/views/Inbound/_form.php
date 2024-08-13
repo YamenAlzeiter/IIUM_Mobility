@@ -2,9 +2,11 @@
 
 use common\helpers\addInboundCourses;
 use common\models\Country;
+use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+
+
 
 /** @var yii\web\View $this */
 /** @var common\models\Inbound $model */
@@ -274,8 +276,9 @@ $addCourses = new addInboundCourses()
             <div class = "col-lg-6">
                 <?= $form->field($model, 'room_type')
                     ->dropDownList([
-                        "Single Room(for PG Students) RM360/Month" => "Single Room(for PG Students) RM360/Month",
-                        "Quad Room(for UG Students) RM360/Month" => "Quad Room(for UG Students) RM360/Month",
+                        "Quad Room – RM165/Month " => "Quad Room – RM165/Month",
+                        "Single PG Room – RM360/Month" => "Single PG Room – RM360/Month",
+                        'Single Executive Room – RM690 + RM50 (Electricity)/Month' => 'Single Executive Room – RM690 + RM50 (Electricity)/Month'
                     ], [
                         'prompt' => 'Select Room Type',
                         'id' => 'room']) ?>
@@ -284,7 +287,7 @@ $addCourses = new addInboundCourses()
         <div class = "col-lg">
             <?= $form->field($model, 'financial_funding')
                 ->dropDownList([
-                    'Self-sponsor' => 'Self-sponsor',
+                    'Self Sponsor' => 'Self Sponsor',
                     'Scholarship' => 'Scholarship',
                     'Other' => 'Other',
                     ], ['prompt' => 'Select Financial Funding', 'id' => 'funding']) ?>
@@ -332,12 +335,23 @@ $addCourses = new addInboundCourses()
         <div class = "col-lg-6"> <?= $form->field($model, 'f_latest_academic_transcript_file', ['template' => $templateFileInput])->fileInput()?></div>
         <div class = "col-lg-6"> <?= $form->field($model, 'f_confirmation_letter_file', ['template' => $templateFileInput])->fileInput()?></div>
         <div class = "col-lg-6"> <?= $form->field($model, 'f_sponsorship_letter_file', ['template' => $templateFileInput])->fileInput()?></div>
+        <div class = "col-lg-6"> <?= $form->field($model, 'f_academic_study_plan_file', ['template' => $templateFileInput])->fileInput()?></div>
+
+
         <div class="col-lg-12">
             <?= $form->field($model, 'agreement')->checkbox([
-                'label' => '<p class="text-dark mb-3">I agree on the <a class="link text-decoration-underline" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"> Terms and Conditions</a></p> ',
-                'encode' => false
-            ])->label(false) ?>
-
+                'label' => false,
+                'template' => "{input} <label>I agree on the 
+                        <button type=\"button\" class=\"link btn btn-light text-decoration-underline\" 
+                            data-bs-toggle=\"modal\" 
+                            data-bs-target=\"#termsModal\"
+                            onclick=\"$('#modal').modal('show').find('#modalContent'); $('#modal').find('.modal-title').html('Terms And Conditions');\">
+                            Terms and Conditions
+                        </button>
+                    </label>\n{error}",
+                'encode' => false,
+                'class' => 'checkbox'
+            ])->label(false); ?>
         </div>
     </div>
 </div>
@@ -440,7 +454,7 @@ $addCourses = new addInboundCourses()
                 handleEnglishChange(this.value);
             })
             program.addEventListener('change', function (){
-                handleEnglishChange(this.value);
+                handleProgramChange(this.value);
             })
         }
 
@@ -474,7 +488,7 @@ $addCourses = new addInboundCourses()
                 EnglishOther.disabled = true;
                 clearInputById('inbound-language_english_test_name_other');
             }
-        }  function handleEnglishChange(value) {
+        }  function handleProgramChange(value) {
             const proposeOther = document.getElementById('inbound-propose_program_type_other');
 
 

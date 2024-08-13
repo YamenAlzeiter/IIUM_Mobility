@@ -2,8 +2,8 @@
 
 use common\helpers\Variables;
 use Itstructure\CKEditor\CKEditor;
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var common\models\Inbound $model */
@@ -39,6 +39,7 @@ $offerLetter = 'Please Upload the Applicant: ' .$model->name. ' Offer Letter'
 
 
 <?php $form = ActiveForm::begin([
+    'id' => 'create-form',
     'options' => ['enctype' => 'multipart/form-data']
 ]); ?>
 

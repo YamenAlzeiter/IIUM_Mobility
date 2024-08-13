@@ -271,8 +271,9 @@ $addCourses = new addInboundCourses()
             <div class = "col-lg-6">
                 <?= $form->field($model, 'room_type')
                     ->dropDownList([
-                        "Single Room(for PG Students) RM360/Month" => "Single Room(for PG Students) RM360/Month",
-                        "Quad Room(for UG Students) RM360/Month" => "Quad Room(for UG Students) RM360/Month",
+                        "Quad Room – RM165/Month " => "Quad Room – RM165/Month",
+                        "Single PG Room – RM360/Month" => "Single PG Room – RM360/Month",
+                        'Single Executive Room – RM690 + RM50 (Electricity)/Month' => 'Single Executive Room – RM690 + RM50 (Electricity)/Month'
                     ], [
                         'prompt' => 'Select Room Type',
                         'id' => 'room']) ?>

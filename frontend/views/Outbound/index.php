@@ -191,12 +191,16 @@ $view = new ViewRenderer();
                             <?= $view->downloadLinkBuilder($model->f_program_brochure, 'Program Brochure', $model->id) ?>
                             <?= $view->downloadLinkBuilder($model->f_latest_payslip, 'Latest Payslip', $model->id) ?>
                             <?= $view->downloadLinkBuilder($model->f_other_latest_payslip, 'Other Latest Payslip', $model->id) ?>
+                            <?= $view->downloadLinkBuilder($model->f_mobility_report, 'Mobility Report', $model->id) ?>
                         </div>
                         <div class = "col-md-12 col-lg-6">
                             <?= $view->downloadLinkBuilder($model->f_proof_sponsorship, 'Proof Sponsorship', $model->id) ?>
                             <?= $view->downloadLinkBuilder($model->f_proof_sponsorship_cover, 'Sponsorship Cover', $model->id) ?>
                             <?= $view->downloadLinkBuilder($model->f_letter_indemnity, 'Letter Indemnity', $model->id) ?>
+                            <?= $view->downloadLinkBuilder($model->f_certificate_attendance, 'Certificate Attendance', $model->id) ?>
+                            <?= $view->downloadLinkBuilder($model->f_academic_transcript_host_university, 'Transcript Host University', $model->id) ?>
                             <?= $view->downloadLinkBuilder($model->f_flight_ticket, 'Flight Ticket', $model->id) ?>
+                            <?= $view->downloadLinkBuilder($model->f_travel_insurance, 'Flight Ticket', $model->id) ?>
                         </div>
                     </div>
 

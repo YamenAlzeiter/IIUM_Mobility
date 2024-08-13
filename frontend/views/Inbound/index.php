@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\StatusPillMaker;
+use common\helpers\Variables;
 use common\helpers\ViewRenderer;
 use common\models\Inbound;
 use yii\bootstrap5\Modal;
@@ -18,41 +19,48 @@ $this->params['breadcrumbs'][] = $this->title;
 $pill = new StatusPillMaker();
 $view = new ViewRenderer();
 ?>
-<div class="application-header row">
 
-        <h2 class="col-lg-12 text-color-dark user-header"><?= Html::encode($model->name) ?></h2>
-        <div class="col-lg-10 d-flex gap-2">
-            <?= $pill->pillBuilder($model->status) ?>
-            <p class="pill pill-draft">
-                <?= Html::encode($model->citizenship) ?>
-            </p>
-        </div>
-    <div class="col-lg-2 text-end">
-        <?php if ($model->status === null || $model->status === 7) : ?>
-            <?= Html::a(
-                '<i class="ti ti-refresh"></i> Update your Info',
-                ['update', 'id' => $model->id],
-                [
-                    'class' => 'btn btn-dark-light fw-bolder mb-0',
-                    'title' => 'Update your Info', // Tooltip for the link
-                ]
-            ); ?>
+    <div class="card mb-2">
+        <div class="card-body">
+            <div class="application-header row">
 
-        <?php endif; ?>
-        <?php if ($model->status === 45) : ?>
+                <h2 class="col-lg-12 text-color-dark user-header mb-4"><?= Html::encode($model->name) ?></h2>
 
-            <div class=" px-4 d-flex flex-row gap-2"> <?= Html::button('<i class="ti ti-plus fs-5" ></i> Upload Files',
-                    [
-                        'value' => Url::to(['upload', 'id' => $model->id]),
-                        'class' => 'btn btn-dark-light w-100',
-                        'id' => 'modalButton',
-                        'onclick' => "$('#modal').modal('show').find('#modalContent').load($(this).attr('value')); $('#modal').find('.modal-title').html('<h1>New Agreement Record</h1>');",
-                    ]); ?>
+                <div class="row align-items-center">
+                    <div class="col-lg-10 d-flex gap-2">
+                        <?= $pill->pillBuilder($model->status) ?>
+                        <p class="pill pill-draft mb-0">
+                            <?= Html::encode($model->citizenship) ?>
+                        </p>
+                    </div>
+                    <div class="col-lg-2 text-end">
+                        <?php if ($model->status === null || $model->status === 7) : ?>
+                            <?= Html::a(
+                                '<i class="ti ti-refresh"></i> Update your Info',
+                                ['update', 'id' => $model->id],
+                                [
+                                    'class' => 'btn btn-dark-light fw-bolder mb-0',
+                                    'title' => 'Update your Info', // Tooltip for the link
+                                ]
+                            ); ?>
+
+                        <?php endif; ?>
+                        <?php if (in_array($model->status, [Variables::application_redirected_upload_inbound, Variables::application_files_not_complete_inbound ])) : ?>
+
+                            <div class=" px-4 d-flex flex-row gap-2"> <?= Html::button('<i class="ti ti-plus fs-5" ></i> Upload Files',
+                                    [
+                                        'value' => Url::to(['upload', 'id' => $model->id]),
+                                        'class' => 'btn btn-dark-light w-100',
+                                        'id' => 'modalButton',
+                                        'onclick' => "$('#modal').modal('show').find('#modalContent').load($(this).attr('value')); $('#modal').find('.modal-title').html('<h1>New Agreement Record</h1>');",
+                                    ]); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
-
-</div>
 
 <div class="row g-2">
     <div class="col-md-12 col-lg-8 fade-in">
@@ -195,15 +203,16 @@ $view = new ViewRenderer();
             <div class="card-body">
                 <h2 class="d-flex text-color-dark fw-bolder align-items-center gap-2"><i class="ti ti-file fw-bolder fs-9"></i> Files</h2>
                 <hr>
-                <?= $view->downloadLinkBuilder($model->f_language_english_certificate, 'English Certificate') ?>
-                <?= $view->downloadLinkBuilder($model->f_recommendation_letter, 'Recommendation Letter') ?>
-                <?= $view->downloadLinkBuilder($model->f_passport, 'Passport') ?>
-                <?= $view->downloadLinkBuilder($model->f_latest_passport_photo, 'Passport Photo') ?>
-                <?= $view->downloadLinkBuilder($model->f_latest_academic_transcript, 'Academic Transcript') ?>
-                <?= $view->downloadLinkBuilder($model->f_confirmation_letter, 'Confirmation Letter') ?>
-                <?= $view->downloadLinkBuilder($model->f_sponsorship_letter, 'Sponsorship Letter') ?>
-                <?= $view->downloadLinkBuilder($model->f_offer_letter, 'Offer Letter') ?>
-                <?= $view->downloadLinkBuilder($model->f_proof_of_payment, 'Proof of Payment') ?>
+                <?= $view->downloadLinkBuilder($model->f_language_english_certificate, 'English Certificate', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_passport, 'Passport Information Page', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_latest_passport_photo, 'Passport Photo', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_latest_academic_transcript, 'Full Academic Transcript', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_sponsorship_letter, 'Official Letter of Sponsorship ', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_recommendation_letter, 'Recommendation Letter', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_academic_study_plan, 'Study Plan', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_confirmation_letter, 'Confirmation Letter', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_offer_letter, 'Offer Letter', $model->id) ?>
+                <?= $view->downloadLinkBuilder($model->f_proof_of_payment, 'Proof of Payment', $model->id) ?>
             </div>
         </div>
     </div>

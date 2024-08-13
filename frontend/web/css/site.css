@@ -54,7 +54,6 @@ a {
     letter-spacing: 2px;
 }
 .pill {
-    font-size: var(--normal-font-size);
     font-weight: var(--pill-font-weight);
     padding: var(--pill-padding);
     border-radius: var(--pill-border-radius);
@@ -171,14 +170,14 @@ a {
 }
 .nav__name{
     opacity: 1;
-    visibility: visible;
+    display: none;
     transition: all .5s;
 }
 .collapse-sidenav .nav__link .nav__name,
 .collapse-sidenav .nav__link .icon,
 .collapse-sidenav .nav__logo .nav__logo-text {
     opacity: 0;
-    visibility: hidden;
+    display: none;
 }
 
 .nav {
@@ -346,7 +345,9 @@ a {
         padding: 1rem 1rem 0 0;
     }
 
-
+    .nav__name{
+        display: block;
+    }
     .show-sidenav {
         width: calc(var(--nav-width) + 180px);
     }

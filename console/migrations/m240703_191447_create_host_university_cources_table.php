@@ -15,8 +15,8 @@ class m240703_191447_create_host_university_cources_table extends Migration
         $this->createTable('{{%host_university_cources}}', [
             'id' => $this->primaryKey(),
             'application_id' => $this->integer(),
-            'course_id' => $this->string(),
-            'course_name' => $this->string(),
+            'course_id' => $this->string(20),
+            'course_name' => $this->string(100),
             'course_credit_hours' => $this->double(),
         ]);
         $this->addForeignKey(

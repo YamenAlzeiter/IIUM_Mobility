@@ -16,8 +16,8 @@ class StatusPillMaker
         $title = "$description";
         return <<<HTML
                     <div class='$pill  $options'>
-                           <p class="m-0 fs-4">$tag</p>
-                        <i class='cursor-pointer ti ti-info-circle fs-6'
+                           <p class="m-0">$tag</p>
+                        <i class='cursor-pointer ti ti-info-circle'
                            data-bs-toggle='tooltip'
                            data-bs-placement='bottom'
                            data-bs-html='true'
@@ -62,8 +62,6 @@ class StatusPillMaker
             51 =>  ['badge' => 'pill-warning'],
             55 =>  ['badge' => 'pill-warning'],
             61 =>  ['badge' => 'pill-warning'],
-            65 =>  ['badge' => 'pill-warning'],
-            71 =>  ['badge' => 'pill-warning'],
             10 =>  ['badge' => 'pill-warning'],
             //reSubmitted
              4 =>  ['badge' => 'pill-sendBack'],
@@ -82,8 +80,11 @@ class StatusPillMaker
             63 =>  ['badge' => 'pill-sendBack'],
             67 =>  ['badge' => 'pill-sendBack'],
             //success
+            71 =>  ['badge' => 'pill-upcoming'],
+            65 =>  ['badge' => 'pill-upcoming'],
             81 =>  ['badge' => 'pill-upcoming'],
-            85 =>  ['badge' => 'pill-upcoming'],
+            91 =>  ['badge' => 'pill-upcoming'],
+            95 =>  ['badge' => 'pill-upcoming'],
         ];
 
         $default = ['badge' => 'pill-alert'];

@@ -15,8 +15,8 @@ class m240704_035628_create_inbound_host_university_courses_table extends Migrat
         $this->createTable('{{%inbound_host_university_courses}}', [
             'id' => $this->primaryKey(),
             'application_id' => $this->integer(),
-            'course_id' => $this->string(),
-            'course_name' => $this->string(),
+            'course_id' => $this->string(20),
+            'course_name' => $this->string(100),
             'course_credit_hours' => $this->double(),
         ]);
         $this->addForeignKey(

@@ -15,7 +15,7 @@ class m240703_191718_create_kcdio_table extends Migration
         $this->createTable('{{%kcdio}}', [
             'id' => $this->primaryKey(),
             'kcdio' => $this->string(100),
-            'tag' => $this->string(),
+            'tag' => $this->string(10),
         ]);
 
         $this->insert('{{%kcdio}}', ['kcdio' => 'Kulliyyah of Engineering', 'tag' => 'KOE']);

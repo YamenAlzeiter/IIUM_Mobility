@@ -23,7 +23,7 @@ class Variables
     const application_files_not_complete = 63;
     const application_reminder_sent = 71;
     const application_files_uploaded_final = 81;
-    const application_complete_outbound = 85;
+    const application_complete_outbound = 91;
 
 //inbound status
     const application_redirected_kcdio_inbound = 5;
@@ -39,7 +39,7 @@ class Variables
     const application_files_uploaded_inbound = 55;
     const application_accepted_inbound = 65;
     const application_files_not_complete_inbound = 67;
-    const application_complete_inbound = 85;
+    const application_complete_inbound = 95;
 
 
 

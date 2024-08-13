@@ -3,6 +3,7 @@
 namespace common\models\search;
 
 use common\helpers\Variables;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Outbound;
@@ -23,7 +24,7 @@ class OutboundSearch extends Outbound
     {
         return [
             [['id', 'status', 'dean_id', 'hod_id'], 'integer'],
-            [['matric_card', 'name', 'citizenship', 'gender', 'birth_date', 'mobile_number', 'email', 'passport_number', 'passport_expiration', 'country', 'state', 'permanent_address', 'post_code', 'mailing_country', 'mailing_state', 'mailing_permanent_address', 'mailing_post_code', 'emergency_name', 'emergency_relationship', 'emergency_mobile_number', 'emergency_email', 'emergency_country', 'emergency_state', 'emergency_postcode', 'emergency_address', 'academic_education_lvl', 'academic_kulliyyah', 'academic_current_semester', 'academic_current_year', 'academic_program_name', 'academic_cgpa', 'research', 'english_proficiency', 'third_language', 'financial_funded_accept', 'sponsorship_name', 'mobility_type', 'mobility_from', 'mobility_until', 'host_university_name', 'host_university_country', 'credit_transform_availability', 'host_university_pic_name', 'host_university_pic_mobile_number', 'host_university_pic_email', 'host_university_pic_position', 'host_university_pic_country', 'host_university_pic_postcode', 'host_university_pic_address', 'host_scholarship', 'host_scholarship_amount', 'f_academic_transcript', 'f_program_brochure', 'f_latest_payslip', 'f_other_latest_payslip', 'f_proof_sponsorship', 'f_proof_sponsorship_cover', 'f_letter_indemnity', 'f_flight_ticket', 'f_offer_letter', 'f_files', 'token', 'temp', 'updated_at', 'created_at', 'mobility_program', 'applications', 'full_info', 'year'], 'safe'],
+            [['matric_card', 'name', 'citizenship', 'gender', 'birth_date', 'mobile_number', 'email', 'passport_number', 'passport_expiration', 'country', 'state', 'permanent_address', 'post_code', 'mailing_country', 'mailing_state', 'mailing_permanent_address', 'mailing_post_code', 'emergency_name', 'emergency_relationship', 'emergency_mobile_number', 'emergency_email', 'emergency_country', 'emergency_state', 'emergency_postcode', 'emergency_address', 'academic_education_lvl', 'academic_kulliyyah', 'academic_current_semester', 'academic_current_year', 'academic_program_name', 'academic_cgpa', 'research', 'english_proficiency', 'third_language', 'financial_funded_accept', 'sponsorship_name', 'mobility_type', 'mobility_from', 'mobility_until', 'host_university_name', 'host_university_country', 'credit_transform_availability', 'host_university_pic_name', 'host_university_pic_mobile_number', 'host_university_pic_email', 'host_university_pic_position', 'host_university_pic_country', 'host_university_pic_postcode', 'host_university_pic_address', 'host_scholarship', 'host_scholarship_amount', 'f_academic_transcript', 'f_program_brochure', 'f_latest_payslip', 'f_other_latest_payslip', 'f_proof_sponsorship', 'f_proof_sponsorship_cover', 'f_letter_indemnity', 'f_flight_ticket', 'f_offer_letter', 'f_files', 'token', 'temp', 'updated_at', 'created_at', 'mobility_program', 'applications', 'year', 'full_info'], 'safe'],
             [['english_result', 'sponsorship_funding'], 'number'],
             [['agreement_accept'], 'boolean'],
         ];
@@ -74,7 +75,7 @@ class OutboundSearch extends Outbound
         $this->load($params);
 
         if (!$this->validate()) {
-            // Uncomment the following line if you do not want to return any records when validation fails
+            // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
@@ -85,14 +86,18 @@ class OutboundSearch extends Outbound
             'status' => $this->status,
             'citizenship' => $this->citizenship,
             'country' => $this->country,
+            'mobility_from' => $this->mobility_from,
+            'mobility_until' => $this->mobility_until
         ]);
 
         if ($this->applications === 'new_applications') {
             $query->andWhere(['not in', 'status', [61,81]]);
         } elseif ($this->applications === 'active_applications') {
-            $query->andWhere(['OR', ['status' => 100], ['status' => 91]]);
+            $query->andWhere(['OR', ['status' => 71]]);
         } elseif ($this->applications === 'expired_applications') {
-            $query->andWhere(['OR', ['status' => 102], ['status' => 92]]);
+            $query->andWhere(['OR', ['status' => 81]]);
+        } elseif ($this->applications === 'rejected_applications'){
+            $query->andWhere(['OR', ['status' => 2]]);
         }
 
         if ($this->year) {
@@ -104,39 +109,44 @@ class OutboundSearch extends Outbound
         }
 
 
-        $query->orFilterWhere(['ilike', 'matric_card', $this->full_info])
-            ->orFilterWhere(['ilike', 'name', $this->full_info])
-            ->orFilterWhere(['ilike', 'gender', $this->full_info])
-            ->orFilterWhere(['ilike', 'mobile_number', $this->full_info])
-            ->orFilterWhere(['ilike', 'email', $this->full_info])
-            ->orFilterWhere(['ilike', 'passport_number', $this->full_info])
-            ->orFilterWhere(['ilike', 'state', $this->full_info])
-            ->orFilterWhere(['ilike', 'permanent_address', $this->full_info])
-            ->orFilterWhere(['ilike', 'post_code', $this->full_info])
-            ->orFilterWhere(['ilike', 'academic_education_lvl', $this->full_info])
-            ->orFilterWhere(['ilike', 'academic_kulliyyah', $this->full_info])
-            ->orFilterWhere(['ilike', 'academic_current_semester', $this->full_info])
-            ->orFilterWhere(['ilike', 'academic_current_year', $this->full_info])
-            ->orFilterWhere(['ilike', 'academic_program_name', $this->full_info])
-            ->orFilterWhere(['ilike', 'academic_cgpa', $this->full_info])
-            ->orFilterWhere(['ilike', 'english_proficiency', $this->full_info])
-            ->orFilterWhere(['ilike', 'third_language', $this->full_info])
-            ->orFilterWhere(['ilike', 'financial_funded_accept', $this->full_info])
-            ->orFilterWhere(['ilike', 'sponsorship_name', $this->full_info])
-            ->orFilterWhere(['ilike', 'mobility_type', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_name', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_country', $this->full_info])
-            ->orFilterWhere(['ilike', 'credit_transform_availability', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_pic_name', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_pic_mobile_number', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_pic_email', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_pic_position', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_pic_country', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_pic_postcode', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_university_pic_address', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_scholarship', $this->full_info])
-            ->orFilterWhere(['ilike', 'host_scholarship_amount', $this->full_info])
-            ->orFilterWhere(['ilike', 'mobility_program', $this->full_info]);
+
+        $query->andFilterWhere([
+            'or',
+            ['ilike', 'matric_card', $this->full_info],
+            ['ilike', 'name', $this->full_info],
+            ['ilike', 'gender', $this->full_info],
+            ['ilike', 'mobile_number', $this->full_info],
+            ['ilike', 'email', $this->full_info],
+            ['ilike', 'passport_number', $this->full_info],
+            ['ilike', 'state', $this->full_info],
+            ['ilike', 'permanent_address', $this->full_info],
+            ['ilike', 'post_code', $this->full_info],
+            ['ilike', 'academic_education_lvl', $this->full_info],
+            ['ilike', 'academic_kulliyyah', $this->full_info],
+            ['ilike', 'academic_current_semester', $this->full_info],
+            ['ilike', 'academic_current_year', $this->full_info],
+            ['ilike', 'academic_program_name', $this->full_info],
+            ['ilike', 'academic_cgpa', $this->full_info],
+            ['ilike', 'english_proficiency', $this->full_info],
+            ['ilike', 'third_language', $this->full_info],
+            ['ilike', 'financial_funded_accept', $this->full_info],
+            ['ilike', 'sponsorship_name', $this->full_info],
+            ['ilike', 'mobility_type', $this->full_info],
+            ['ilike', 'host_university_name', $this->full_info],
+            ['ilike', 'host_university_country', $this->full_info],
+            ['ilike', 'credit_transform_availability', $this->full_info],
+            ['ilike', 'host_university_pic_name', $this->full_info],
+            ['ilike', 'host_university_pic_mobile_number', $this->full_info],
+            ['ilike', 'host_university_pic_email', $this->full_info],
+            ['ilike', 'host_university_pic_position', $this->full_info],
+            ['ilike', 'host_university_pic_country', $this->full_info],
+            ['ilike', 'host_university_pic_postcode', $this->full_info],
+            ['ilike', 'host_university_pic_address', $this->full_info],
+            ['ilike', 'host_scholarship', $this->full_info],
+            ['ilike', 'host_scholarship_amount', $this->full_info],
+            ['ilike', 'mobility_program', $this->full_info],
+        ]);
+
 
         return $dataProvider;
     }

@@ -22,53 +22,30 @@ landing::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<header>
-    <!--        <a href="" class="logo"><img src="https://shenliktech.com/shen/assets/img/logo.png" alt=""> <span>Shenlik Tech.</span></a>-->
-    <?= Html::a(Html::img(Yii::getAlias('@web') . '/iiumLogo.svg', ['class' => 'logo']), '#', ['class' => 'logo']) ?>
-
-    <ul class="navbarr">
-        <li><a href="#home" class="active">Home</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#about">About Us</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-
-    <div class="mainn">
-
-        <bi class='ti ti-list' id="menu-icon"></bi>
+<?= $content ?>
+<div class="footer" id="footer">
+    <div class="logo">
+        <?= Html::a(Html::img(Yii::getAlias('@web') . '/iiumLogo.svg', ['class' => 'logoface']), 'index', ['class' => 'logo']) ?>
+        <a href="http://applicant.iium/" target="_blank"><h2 class="sitename reversed">Memorandum Program</h2></a>
     </div>
-</header>
 
-<section class="hero parallax" data-speed="0.5">
-    <div class="hero-content container">
-        <h1>IIUM <br> MOBILITY <br> PROGRAM</h1>
-        <a href="/site/login" class="btn">Join Now!</a>
+    <div class="footer-cols">
+        <div class="footer-col">
+            <h4 class="fw-bolder">
+                Contact Us:
+            </h4>
+            <p>
+                <span class="fw-bolder">OFFICE FOR STRATEGY AND INSTITUTIONAL CHANGE (OSIC)</span><br>
+                <span>Level 3, Muhammad Abdul-rauf Building,</span><br>
+                P.O. Box 10,<br>
+                50728 Kuala Lumpur <br>
+                <span class="fw-bolder">Phone:</span> +6 03 6421 5851 <br>
+                <span class="fw-bolder">Email:</span> qaiium@iium.edu.my
+            </p>
+        </div>
     </div>
-</section>
 
-
-<script>
-    let menu = document.querySelector('#menu-icon');
-    let navbar = document.querySelector('.navbarr');
-
-    menu.onclick = () =>
-    {
-        menu.classList.toggle('bi-x');
-        navbar.classList.toggle('open');
-    }
-
-
-
-    window.addEventListener('scroll', function() {
-        let scrollPosition = window.pageYOffset;
-        let parallaxElements = document.querySelectorAll('.parallax');
-
-        parallaxElements.forEach(function(element) {
-            let speed = element.getAttribute('data-speed');
-            element.style.backgroundPositionY = (scrollPosition * speed) + 'px';
-        });
-    });
-</script>
+</div>
 <?php $this->endBody() ?>
 </body>
 </html>

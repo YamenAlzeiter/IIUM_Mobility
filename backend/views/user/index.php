@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return '';
                 },
                 'update' => function ($url, $model, $key) {
-                    if ($model->status == User::STATUS_ACTIVE) {
+                    if ($model->status == User::STATUS_ACTIVE && $model->type !== 'admin') {
                         return Html::a(
                             '<i class="ti fs-7 text-primary ti-pencil" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" title="Update"></i>',
                             'javascript:void(0);',

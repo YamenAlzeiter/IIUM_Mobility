@@ -3,10 +3,11 @@
 use common\helpers\addInboundCourses;
 use common\models\Country;
 use common\models\State;
+use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\Modal;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var common\models\Outbound $model */
@@ -360,10 +361,21 @@ $addCourses = new addInboundCourses()
         <div class = "col-lg-6"> <?= $form->field($model, 'f_program_brochure_file', ['template' => $templateFileInput])->fileInput()?></div>
         <div class = "col-lg-6"> <?= $form->field($model, 'f_latest_payslip_file', ['template' => $templateFileInput])->fileInput()?></div>
         <div class="col-lg-12">
+
             <?= $form->field($model, 'agreement_accept')->checkbox([
-                'label' => '<p class="text-dark mb-3">I agree on the <a class="link text-decoration-underline" data-bs-toggle="modal" data-bs-target="#exampleModalCenter"> Terms and Conditions</a></p> ',
-                'encode' => false
-            ])->label(false) ?>
+                'label' => false,
+                'template' => "{input} <label>I agree on the 
+                        <button type=\"button\" class=\"link btn btn-light text-decoration-underline\" 
+                            data-bs-toggle=\"modal\" 
+                            data-bs-target=\"#termsModal\"
+                            onclick=\"$('#modal').modal('show').find('#modalContent'); $('#modal').find('.modal-title').html('Terms And Conditions');\">
+                            Terms and Conditions
+                        </button>
+                    </label>\n{error}",
+                'encode' => false,
+                'class' => 'checkbox'
+            ])->label(false); ?>
+
         </div>
     </div>
 </div>

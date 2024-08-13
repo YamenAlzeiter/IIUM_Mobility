@@ -1,9 +1,7 @@
 <?php
 
 use common\helpers\builders;
-use common\helpers\StatusPillMaker;
-use common\models\Inbound;
-use yii\bootstrap5\Modal;
+use common\models\Faq;
 use yii\grid\CheckboxColumn;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -11,58 +9,36 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\web\JsExpression;
 use yii\widgets\Pjax;
-
 /** @var yii\web\View $this */
-/** @var common\models\search\InboundSearch $searchModel */
+/** @var common\models\search\FaqSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Inbounds';
+$this->title = 'FAQ';
 $this->params['breadcrumbs'][] = $this->title;
-
-$yearsStart = Inbound::find()
-    ->select(['EXTRACT(YEAR FROM propose_duration_start) AS year'])
-    ->distinct()
-    ->column();
-
-$yearsEnd = Inbound::find()
-    ->select(['EXTRACT(YEAR FROM propose_duration_end) AS year'])
-    ->distinct()
-    ->column();
-
-// Combine and filter out NULL values
-$years = array_filter(array_unique(array_merge($yearsStart, $yearsEnd)));
 ?>
-<?php Pjax::begin(['id' => 'inbound-grid-pjax']); ?>
+<?php Pjax::begin(['id' => 'faq-grid-pjax']); ?>
 <div class="container-md my-3 p-4 rounded-3 bg-white shadow">
-
     <div class="row justify-content-between">
         <div class="col-md-8">
             <?php echo $this->render('_search', ['model' => $searchModel]); ?>
         </div>
         <div class="col-md-4 align-self-end mb-3">
             <div class="d-flex justify-content-end gap-2">
-                <?php
-                if (Yii::$app->user->can('admin')) {
-                    echo '<div class="bulk-delete-container d-none d-inline-flex align-items-center gap-2">'
-                        . Html::button('<i class="ti ti-trash fs-7"></i>', ['id' => 'bulk-delete', 'class' => 'btn btn-danger', 'data-pjax' => '0']) .
-                        '</div>';
-                }
-                ?>
-                <button class="btn-submit dropdown-toggle fs-4" type="button" id="dropdownMenuButton1"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="ti ti-file-spreadsheet"></i> Download Excel
-                </button>
-                <ul class="dropdown-menu dropdown-menu-width" aria-labelledby="dropdownMenuButton1">
-                    <?php foreach ($years as $option): ?>
-                        <li>
-                            <?= Html::a(
-                                'Year ' . $option,
-                                Url::to(['export-excel', 'year' => $option]),
-                                ['class' => 'dropdown-item', 'data-pjax' => '0']
-                            ) ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                <?= Html::a(
+                    '<i class="ti fs-7 ti-plus"></i> Add New FAQ',
+                    'javascript:void(0);',
+                    [
+                        'class' => 'btn-submit fs-4 text-decoration-none',
+                        'value' => Url::to('create'),
+                        'onclick' => "$('#modal').modal('show').find('#modalContent').load($(this).attr('value'), function() {
+            $('#modalContent').append('');
+            $('#modal').find('.modal-title').html('<h1 class=\"mb-0\">Create</h1>');
+        });",
+                    ]
+                ); ?>
+                <div class="bulk-delete-container d-none d-inline-flex align-items-center gap-2">'
+                        <?= Html::button('<i class="ti ti-trash fs-7"></i>', ['id' => 'bulk-delete', 'class' => 'btn btn-danger', 'data-pjax' => '0']) ?>
+                </div>
             </div>
         </div>
     </div>
@@ -74,42 +50,19 @@ $years = array_filter(array_unique(array_merge($yearsStart, $yearsEnd)));
             'id' => 'inbound-grid',
             'dataProvider' => $dataProvider,
             'tableOptions' => ['class' => 'table table-borderless table-striped table-header-flex text-nowrap rounded-3 overflow-hidden '],
-            'rowOptions' => function ($model) {
-                $build = new builders();
-                return $build->tableProbChanger($model->status, 'outbound') ? ['class' => 'need-action fw-bolder'] : [];
-            },
             'columns' => array_merge(
                 Yii::$app->user->can('admin') ? [['class' => CheckboxColumn::className()]] : [],
                 [
-                    'name',
-                    'country_of_origin',
-                    'academic_home_university',
-                    'academic_education_lvl',
-                    [
-                        'label' => 'Current Status', 'format' => 'raw', 'value' => function ($model) {
-                        $statusHelper = new StatusPillMaker();
-                        return $statusHelper->pillBuilder($model->status);},
-                        'contentOptions' => ['class' => 'col-1 text-start'],
-                    ],
+                    'question',
+                    'type',
                     [
                         'class' => ActionColumn::className(),
-                        'template' => '{view} {action} {log}',
+                        'template' => '{update}',
                         'contentOptions' => ['class' => 'text-end'],
                         'buttons' => [
-                            'view' => function ($url, $model, $key) {
+                            'update' => function ($url, $model, $key) {
                                 $build = new builders();
-                                return $build->actionBuilder($model, 'view');
-                            },
-                            'action' => function ($url, $model, $key) {
-                                $build = new builders();
-                                if ($build->tableProbChanger($model->status, 'inbound')) {
-                                    return $build->actionBuilderModal($model, 'action');
-                                }
-                                return ''; // Return an empty string if the condition is not met
-                            },
-                            'log' => function ($url, $model, $key) {
-                                $build = new builders();
-                                return $build->actionBuilderModal($model, 'log');
+                                return $build->actionBuilderModal($model, 'update');
                             },
                         ],
                     ],
@@ -185,7 +138,7 @@ function initializeBulkDelete() {
                                 'Your selected items have been deleted.',
                                 'success'
                             ).then(() => {
-                                $.pjax.reload({container: '#inbound-grid-pjax'}); // Reload PJAX content
+                                $.pjax.reload({container: '#faq-grid-pjax'}); // Reload PJAX content
                             });
                         } else {
                             Swal.fire(

@@ -156,7 +156,7 @@ form > div p{
     margin-bottom: 2em;
 }
 
-form input:not([type="file"]),
+form input:not([type="file"]):not([type="checkbox"]),
 form select,
 form textarea {
     height: 50px !important;

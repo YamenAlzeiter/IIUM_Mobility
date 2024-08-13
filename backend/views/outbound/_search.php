@@ -1,6 +1,7 @@
 <?php
 
 use common\models\Country;
+use common\models\Outbound;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -8,16 +9,27 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var common\models\search\OutboundSearch $model */
 /** @var yii\widgets\ActiveForm $form */
+
+
+$yearsStart = Outbound::find()
+    ->select(['EXTRACT(YEAR FROM mobility_from) AS year'])
+    ->distinct()
+    ->column();
+
+$yearsEnd = Outbound::find()
+    ->select(['EXTRACT(YEAR FROM mobility_until) AS year'])
+    ->distinct()
+    ->column();
+
+// Combine and filter out NULL values
+$years = array_filter(array_unique(array_merge($yearsStart, $yearsEnd)));
+
 ?>
 
 <div class="outbound-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-        'options' => [
-            'data-pjax' => 1
-        ],
+        'action' => ['index'], 'method' => 'get', 'options' => ['data-pjax' => 1, ['class' => 'row gap-2']]
     ]); ?>
 
 
@@ -40,24 +52,24 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <div class="col-md-4">
-            <?= $form->field($model, 'full_info', ['options' => ['mb-0']])->textInput([
-                'class' => 'form-control', // Add class for styling
-                'placeholder' => 'Search', // Placeholder text
-                'onchange' => '$(this).closest("form").submit();', // Submit form on change
+            <?= $form->field($model,'full_info', ['options' => ['mb-0']])->textInput([
+                'class' => 'form-control',
+                'placeholder' => 'Search',
+                'onchange' => '$(this).closest("form").submit();',
             ])->label(false) ?>
         </div>
         <div class="col-md-2">
             <?= $form->field($model, 'citizenship',
                 ['options' => ['mb-0']])->dropDownList(ArrayHelper::map(Country::find()->all(), 'nationality', 'nationality'), [
-                'class' => 'form-select', 'prompt' => 'Citizenship', // Placeholder text
-                'onchange' => '$(this).closest("form").submit();', // Submit form on change
+                'class' => 'form-select', 'prompt' => 'Citizenship',
+                'onchange' => '$(this).closest("form").submit();',
             ])->label(false) ?>
         </div>
         <div class="col-md-4">
             <?= $form->field($model, 'country',
                 ['options' => ['mb-0']])->dropDownList(ArrayHelper::map(Country::find()->all(), 'id', 'name'), [
-                'class' => 'form-select', 'prompt' => 'Country', // Placeholder text
-                'onchange' => '$(this).closest("form").submit();', // Submit form on change
+                'class' => 'form-select', 'prompt' => 'Country',
+                'onchange' => '$(this).closest("form").submit();',
             ])->label(false) ?>
         </div>
         <div class="col-md-2">

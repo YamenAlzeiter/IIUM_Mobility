@@ -212,16 +212,6 @@ class OutboundController extends Controller
                 $hostUniversityCources[] = $modelHostCourse;
             }
 
-            if($model->english_proficiency != 'Other'){
-                $model->third_language = null;
-            }
-//            if($model->mobility_program === 'Other'){
-//                $model->mobility_program = $model->mobility_program_other;
-//            }
-//            if($model->host_scholarship === 'No'){
-//                $model->host_scholarship_amount = null;
-//            }
-
             // Set user ID for new record
             $model->id = Yii::$app->user->id;
 
@@ -237,6 +227,17 @@ class OutboundController extends Controller
             $valid = Model::validateMultiple($localUniversityCources) && Model::validateMultiple($hostUniversityCources) && $model->validate();
 
             if ($valid) {
+
+                if($model->english_proficiency != 'Other'){
+                    $model->third_language = null;
+                }
+                if($model->mobility_program === 'Other'){
+                    $model->mobility_program = $model->mobility_program_other;
+                }
+                if($model->host_scholarship === 'No'){
+                    $model->host_scholarship_amount = null;
+                }
+
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     // Save main model
@@ -371,11 +372,21 @@ class OutboundController extends Controller
                 $model->created_at = date('Y-m-d H:i:s');
             }
 
-            // Upload files and validate
             $model->uploadFiles(Yii::$app->user->id);
             $valid = Model::validateMultiple($localUniversityCources) && Model::validateMultiple($hostUniversityCources) && $model->validate();
 
             if ($valid) {
+
+                if($model->english_proficiency != 'Other'){
+                    $model->third_language = null;
+                }
+                if($model->mobility_program === 'Other'){
+                    $model->mobility_program = $model->mobility_program_other;
+                }
+                if($model->host_scholarship === 'No'){
+                    $model->host_scholarship_amount = null;
+                }
+
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     if ($model->save(false)) {
@@ -436,39 +447,47 @@ class OutboundController extends Controller
             'modelsHostCourses' => (empty($hostUniversityCources)) ? [new HostUniversityCources()] : $hostUniversityCources
         ]);
     }
-    public function actionUpload($id){
-
+    public function actionUpload($id)
+    {
         $model = $this->findModel($id);
-
         $model->scenario = 'uploader';
-        if ($this->request->isPost && $model->load($this->request->post())) {
 
-
-
-            if(in_array($model->status,[
-                Variables::application_files_not_complete,
-                Variables::redirected_to_student_UPLOAD_files
-            ])){
-                $model->status = Variables::application_files_uploaded;
-                $model->uploadFiles(Yii::$app->user->id);
-            }elseif ($model->status == Variables::application_reminder_sent){
-                $model->status = Variables::application_files_uploaded_final;
-                $model->uploadMultipleFiles(Yii::$app->user->id);
-            }
-
-            if ($model->save()) {
-                return $this->redirect(['index']);
-            }
-
+        // Handle Ajax validation
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return \yii\widgets\ActiveForm::validate($model);
         }
+
+        // Handle form submission
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                if (in_array($model->status, [
+                    Variables::application_files_not_complete,
+                    Variables::redirected_to_student_UPLOAD_files,
+                ])) {
+                    $model->status = Variables::application_files_uploaded;
+                    $model->uploadFiles(Yii::$app->user->id);
+                } elseif ($model->status == Variables::application_reminder_sent) {
+                    $model->status = Variables::application_files_uploaded_final;
+                    $model->uploadFiles(Yii::$app->user->id);
+                    $model->uploadMultipleFiles(Yii::$app->user->id);
+                }
+
+                if ($model->validate() && $model->save()) {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+
         return $this->renderAjax('upload', [
             'model' => $model,
         ]);
     }
 
-    public function actionDownloader($filePath)
+
+    public function actionDownloader($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/outbound_application_') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/outbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (!file_exists($fullPath)) {
@@ -480,9 +499,9 @@ class OutboundController extends Controller
         }
     }
 
-    public function actionDownload($filePath)
+    public function actionDownload($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/outbound_application_') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/outbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (file_exists($fullPath)) {

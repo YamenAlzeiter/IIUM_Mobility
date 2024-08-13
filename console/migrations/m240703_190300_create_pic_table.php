@@ -15,12 +15,12 @@ class m240703_190300_create_pic_table extends Migration
         $this->createTable('{{%pic}}', [
             'id' => $this->primaryKey(),
             'kcdio_id' => $this->string(),
-            'name' => $this->string(),
-            'email' => $this->string(),
-            'name_cc_x' => $this->string(),
-            'email_cc_x' => $this->string(),
-            'name_cc_xx' => $this->string(),
-            'email_cc_xx' => $this->string(),
+            'name' => $this->string(100),
+            'email' => $this->string(50),
+            'name_cc_x' => $this->string(100),
+            'email_cc_x' => $this->string(50),
+            'name_cc_xx' => $this->string(100),
+            'email_cc_xx' => $this->string(50),
         ]);
         $this->addForeignKey(
             'fk-kcdio',

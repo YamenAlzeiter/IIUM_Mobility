@@ -10,7 +10,6 @@ use common\models\LocalUniversityCources;
 use common\models\Outbound;
 use common\models\OutboundLog;
 use common\models\Pic;
-use common\models\Poc;
 use common\models\search\OutboundSearch;
 use DirectoryIterator;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -238,14 +237,6 @@ class OutboundController extends Controller
             }
             foreach ($hostUniversityCources as $modelCourse) {
                 $modelCourse->application_id = $model->id;
-            }
-
-            // Handle save/update based on button clicked
-            if ($this->request->post('saving')) {
-                $model->status = null;
-            } else if ($this->request->post('creating')) {
-                $model->scenario = 'creating';
-                $model->status = Variables::application_init;
             }
 
             // Upload files and validate
@@ -493,9 +484,9 @@ class OutboundController extends Controller
         return $result;
     }
 
-    public function actionDownloader($filePath)
+    public function actionDownloader($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/outbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (!file_exists($fullPath)) {
@@ -507,9 +498,9 @@ class OutboundController extends Controller
         }
     }
 
-    public function actionDownload($filePath)
+    public function actionDownload($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/outbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (file_exists($fullPath)) {

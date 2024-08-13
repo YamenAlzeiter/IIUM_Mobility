@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\builders;
+use common\helpers\StatusPillMaker;
 use common\models\Outbound;
 use yii\bootstrap5\Modal;
 use yii\grid\CheckboxColumn;
@@ -32,7 +33,7 @@ $years = array_filter(array_unique(array_merge($yearsStart, $yearsEnd)));
 ?>
 
 
-    <?php Pjax::begin(); ?>
+<?php Pjax::begin(['id' => 'outbound-grid-pjax']); ?>
     <div class="container-md my-3 p-4 rounded-3 bg-white shadow">
 
         <div class="row justify-content-between">
@@ -72,7 +73,9 @@ $years = array_filter(array_unique(array_merge($yearsStart, $yearsEnd)));
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'id' => 'outbound-grid',
-            'tableOptions' => ['class' => 'table  table-borderless table-striped table-header-flex text-nowrap rounded-3 overflow-hidden'],
+            'tableOptions' => [
+                'class' => 'table table-borderless table-striped table-header-flex text-nowrap rounded-3 overflow-hidden align-middle'
+            ],
             'rowOptions' => function ($model) {
                 $build = new builders();
                 return $build->tableProbChanger($model->status, 'outbound') ? ['class' => 'need-action fw-bolder'] : [];
@@ -80,11 +83,15 @@ $years = array_filter(array_unique(array_merge($yearsStart, $yearsEnd)));
              'columns' => array_merge(
                 Yii::$app->user->can('admin') ? [['class' => CheckboxColumn::className()]] : [],
                 [
-                'id',
-                'status',
-                'matric_card',
                 'name',
+                'matric_card',
                 'citizenship',
+                [
+                    'label' => 'Current Status', 'format' => 'raw', 'value' => function ($model) {
+                    $statusHelper = new StatusPillMaker();
+                    return $statusHelper->pillBuilder($model->status);},
+                    'contentOptions' => ['class' => 'col-1 text-start'],
+                ],
                 [
                     'class' => ActionColumn::className(),
                     'template' => '{view} {action} {log}',
@@ -132,9 +139,8 @@ modal::end();
 
 <?php
 $url = Url::to(['bulk-delete']);
-
 $js = <<<JS
-$(document).ready(function() {
+function initializeBulkDelete() {
     function toggleBulkDeleteButton() {
         var keys = $('#outbound-grid').yiiGridView('getSelectedRows');
         if (keys.length > 0) {
@@ -148,25 +154,30 @@ $(document).ready(function() {
     toggleBulkDeleteButton();
 
     // Trigger the toggle function on selection change
-    $('#outbound-grid').on('change', 'input[name="selection[]"]', function() {
+    $(document).on('change', '#outbound-grid input[name="selection[]"]', function() {
         toggleBulkDeleteButton();
     });
 
-    //sweet alert ...
+    // Handle PJAX complete event
+    $(document).on('pjax:success', function() {
+        toggleBulkDeleteButton();
+    });
+
+    // SweetAlert for bulk delete
     $('#bulk-delete').on('click', function(e) {
         e.preventDefault();
         var keys = $('#outbound-grid').yiiGridView('getSelectedRows');
         if (keys.length === 0) {
             Swal.fire({
                 icon: 'warning',
-                title: 'No Agreemtns selected',
-                text: 'Please select at least one Agreemtn to delete.'
+                title: 'No items selected',
+                text: 'Please select at least one item to delete.'
             });
             return;
         }
         Swal.fire({
             title: 'Are you sure?',
-              text: "All data and associated files will be permanently deleted from the server. This action cannot be undone!",
+            text: "All data and associated files will be permanently deleted from the server. This action cannot be undone!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -177,15 +188,15 @@ $(document).ready(function() {
                 $.ajax({
                     type: 'POST',
                     url: '{$url}',
-                    data: {ids: keys},
+                    data: { ids: keys },
                     success: function(data) {
                         if (data.success) {
                             Swal.fire(
                                 'Deleted!',
-                                'Your selected Agreements have been deleted.',
+                                'Your selected items have been deleted.',
                                 'success'
                             ).then(() => {
-                                location.reload();
+                                $.pjax.reload({container: '#outbound-grid-pjax'}); // Reload PJAX content
                             });
                         } else {
                             Swal.fire(
@@ -199,9 +210,18 @@ $(document).ready(function() {
             }
         });
     });
+}
+
+// Initialize the script on page load
+$(document).ready(function() {
+    initializeBulkDelete();
+});
+
+// Re-initialize the script on PJAX success
+$(document).on('pjax:success', function() {
+    initializeBulkDelete();
 });
 JS;
 
 $this->registerJs(new JsExpression($js));
 ?>
-

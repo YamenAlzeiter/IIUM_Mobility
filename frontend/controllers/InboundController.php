@@ -147,22 +147,23 @@ class InboundController extends Controller
                 $model->status = Variables::application_init;
                 $model->created_at = date('Y-m-d H:i:s');
             }
+            $model->id = Yii::$app->user->id;
+            $model->uploadFiles($model->id);
 
-            if($model->language_english_test_name == 'Other'){
-                $model->language_english_test_name = $model->language_english_test_name_other;
-            }
-            if($model->financial_funding == 'Other'){
-                $model->financial_funding = $model->financial_funding_other;
-            }
-            if($model->propose_program_type == 'Other'){
-                $model->propose_program_type = $model->propose_program_type_other;
-            }
-
-
-            $model->uploadFiles(Yii::$app->user->id);
             $valid = Model::validateMultiple($modelsCourses) && $model->validate();
 
             if ($valid) {
+
+                if($model->language_english_test_name == 'Other'){
+                    $model->language_english_test_name = $model->language_english_test_name_other;
+                }
+                if($model->financial_funding == 'Other'){
+                    $model->financial_funding = $model->financial_funding_other;
+                }
+                if($model->propose_program_type == 'Other'){
+                    $model->propose_program_type = $model->propose_program_type_other;
+                }
+
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
 
@@ -366,9 +367,9 @@ class InboundController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionDownloader($filePath)
+    public function actionDownloader($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/inbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (!file_exists($fullPath)) {
@@ -380,9 +381,9 @@ class InboundController extends Controller
         }
     }
 
-    public function actionDownload($filePath)
+    public function actionDownload($filePath, $id)
     {
-        $uploadPath = Yii::getAlias('@common/uploads/') . Yii::$app->user->id . '/';
+        $uploadPath = Yii::getAlias('@common/uploads/inbound_application_') . $id . '/';
         $fullPath = $uploadPath . $filePath;
 
         if (file_exists($fullPath)) {

@@ -73,6 +73,7 @@ use function Symfony\Component\Translation\t;
  * @property string|null $f_sponsorship_letter
  * @property string|null $f_offer_letter
  * @property string|null $f_proof_of_payment
+ * @property string|null $f_academic_study_plan
  * @property int|null $kulliyyah_id
  * @property int|null $cps_id
  * @property bool|null $agreement
@@ -103,7 +104,9 @@ class Inbound extends \yii\db\ActiveRecord
     public $f_sponsorship_letter_file;
     public $f_offer_letter_file;
     public $f_proof_of_payment_file;
+    public $f_academic_study_plan_file;
     public $pic_id;
+    public $file_mail;
     /**
      * {@inheritdoc}
      */
@@ -122,7 +125,7 @@ class Inbound extends \yii\db\ActiveRecord
                 [
                     'name', 'gender', 'relation_ship', 'birth_date', 'mobile_number', 'email', 'passport_number', 'passport_expiration', 'religion', 'mazhab', 'citizenship', 'country', 'country_of_origin', 'country_of_residence', 'permanent_address', 'post_code',
                     'emergency_name', 'emergency_relationship', 'emergency_mobile_number', 'emergency_email', 'emergency_address', 'emergency_postcode', 'emergency_country',
-                    'academic_home_university', 'academic_education_lvl', 'academic_program_name', 'academic_program_name',  'academic_year', 'academic_faculty_name', 'academic_result', 'academic_research_title',
+                    'academic_home_university', 'academic_education_lvl', 'academic_program_name', 'academic_program_name',  'academic_year', 'academic_faculty_name', 'academic_result',
                     'memorandum_of_agreement', 'language_is_native_english', 'language_english_test_name',
                     'propose_program_type',  'propose_mobility_type', 'propose_kulliyyah_applied', 'propose_duration_start', 'propose_duration_end', 'propose_transform_credit_hours',
                     'financial_accommodation_in_campus', 'financial_funding',
@@ -149,16 +152,8 @@ class Inbound extends \yii\db\ActiveRecord
                 return empty($model->f_passport);
             }, 'on' => 'creating'],
 
-            [['f_latest_passport_photo_file'], 'required', 'when' => function($model) {
-                return empty($model->f_latest_passport_photo);
-            }, 'on' => 'creating'],
-
             [['f_latest_academic_transcript_file'], 'required', 'when' => function($model) {
                 return empty($model->f_latest_academic_transcript);
-            }, 'on' => 'creating'],
-
-            [['f_confirmation_letter_file'], 'required', 'when' => function($model) {
-                return empty($model->f_confirmation_letter);
             }, 'on' => 'creating'],
 
             [['f_proof_of_payment_file'], 'required', 'when' => function($model) {
@@ -212,6 +207,7 @@ class Inbound extends \yii\db\ActiveRecord
                     return $('#accommodation').val() == 'Yes';
                 }"
             ],
+            ['file_mail', 'file', 'extensions' => 'pdf'],
             [['status'], 'required', 'on' => 'actioner'],
             ['passport_expiration', 'validatePassportExpiration'],
             ['propose_duration_end' , 'compare', 'compareAttribute' => 'propose_duration_start', 'operator' => '>=', 'message' => 'Proposal duration end must be greater than or equal to proposal duration start.', 'on' => 'creating'],
@@ -263,6 +259,7 @@ class Inbound extends \yii\db\ActiveRecord
             'f_sponsorship_letter_file' => 'f_sponsorship_letter',
             'f_offer_letter_file' => 'f_offer_letter',
             'f_proof_of_payment_file' => 'f_proof_of_payment',
+            'f_academic_study_plan_file' => 'f_academic_study_plan'
         ];
 
         foreach ($files as $fileAttr => $dbAttr) {
@@ -365,6 +362,20 @@ class Inbound extends \yii\db\ActiveRecord
             'f_sponsorship_letter' => 'Sponsorship Letter',
             'f_offer_letter' => 'Offer Letter',
             'f_proof_of_payment' => 'Proof Of Payment',
+            'file_mail' => 'Attached File' ,
+
+
+            'f_passport_file' => 'Passport Information Page',
+            'f_latest_passport_photo_file' => 'Passport Photo',
+            'f_latest_academic_transcript_file' => 'Full Academic Transcript',
+            'f_sponsorship_letter_file' => 'Official Letter of Sponsorship',
+            'f_confirmation_letter_file' => 'Confirmation Letter of Enrollment (from Home University)',
+            'f_proof_of_payment_file' => 'Receipt Payment of processing fee 100USD',
+            'f_academic_study_plan_file' => 'Study Plan at Home University',
+            'f_language_english_certificate_file' => 'English Certificate',
+
+            'f_recommendation_letter_file' => 'Recommendation Letter',
+            'f_offer_letter_file' => 'Offer Letter',
 
             'kulliyyah_id' => 'Kulliyyah ID',
             'cps_id' => 'Cps ID',
