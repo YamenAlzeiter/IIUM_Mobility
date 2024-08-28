@@ -6,6 +6,7 @@ use common\models\EmailTemplates;
 use common\models\Inbound;
 use common\models\InboundHostUniversityCourses;
 use Exception;
+use PharIo\Manifest\Email;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -59,7 +60,10 @@ class InboundController extends Controller
         $model = Inbound::findOne(Yii::$app->user->id);
 
         if ($model === null) {
-            throw new \yii\web\NotFoundHttpException('You do not have any records yet');
+            // Pass a flag to the view to indicate no record exists
+            return $this->render('index', [
+                'model' => null,
+            ]);
         }
 
         $courses = InboundHostUniversityCourses::find()
@@ -103,6 +107,7 @@ class InboundController extends Controller
         $this->layout = 'wizard';
 
         $model = new Inbound();
+        $mail = EmailTemplates::find()->where(['id' => Variables::newApplication])->one();
         $modelsCourses = [new InboundHostUniversityCourses()];
 
         // Check if the user already has an existing Inbound record
@@ -184,6 +189,18 @@ class InboundController extends Controller
                         }
 
                         $transaction->commit();
+                        if ($model->status == Variables::application_init){
+                            Yii::$app
+                                ->mailer
+                                ->compose(['html' => '@backend/views/email/emailTemplate.php'], [
+                                    'subject' => $mail->subject,
+                                    'body' => $mail->body,
+                                ])
+                                ->setFrom(['noReply@iium.edy.my' => 'IIUM Mobility System'])
+                                ->setTo(Variables::$ioEmail)
+                                ->setSubject($mail->subject)
+                                ->send();
+                        }
                         return $this->redirect(['index']);
                     }
                 } catch (Exception $e) {
@@ -216,6 +233,7 @@ class InboundController extends Controller
 
         // Find the existing record to update
         $model = Inbound::findOne(['id' => $id]);
+        $mail = EmailTemplates::find()->where(['id' => Variables::newApplication])->one();
 
         if ($model->status !== 7 && $model->status !== null) {
             Yii::$app->session->setFlash('sweetAlertError', true);
@@ -298,6 +316,20 @@ class InboundController extends Controller
                         }
 
                         $transaction->commit();
+
+                        if ($model->status == Variables::application_init){
+                            Yii::$app
+                                ->mailer
+                                ->compose(['html' => '@backend/views/email/emailTemplate.php'], [
+                                    'subject' => $mail->subject,
+                                    'body' => $mail->body,
+                                ])
+                                ->setFrom(['noReply@iium.edy.my' => 'IIUM Mobility System'])
+                                ->setTo(Variables::$ioEmail)
+                                ->setSubject($mail->subject)
+                                ->send();
+                        }
+
                         return $this->redirect(['index']);
                     }
                 } catch (Exception $e) {

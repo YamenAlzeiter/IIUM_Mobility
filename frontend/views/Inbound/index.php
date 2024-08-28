@@ -19,7 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
 $pill = new StatusPillMaker();
 $view = new ViewRenderer();
 ?>
-
+<?php if ($model === null): ?>
+    <div class="text-center">
+        <p>You do not have any records yet.</p>
+        <?= Html::a('Create New Record', ['create'], ['class' => 'btn-submit']) ?>
+    </div>
+<?php else: ?>
     <div class="card mb-2">
         <div class="card-body">
             <div class="application-header row">
@@ -217,6 +222,7 @@ $view = new ViewRenderer();
         </div>
     </div>
 </div>
+<?php endif;?>
 
 <?php modal::begin(['title' => '', 'id' => 'modal-activity', 'size' => 'modal-lg', 'bodyOptions' => ['class' => 'modal-inner-padding-body mt-0'], 'headerOptions' => ['class' => 'modal-inner-padding justify-content-between'], 'centerVertical' => true, 'scrollable' => true,]);
 

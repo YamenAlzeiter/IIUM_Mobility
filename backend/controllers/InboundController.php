@@ -48,7 +48,7 @@ class InboundController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['staff'],
-                            'actions' => ['index', 'view', 'action', 'serve-file', 'export-excel'],
+                            'actions' => ['index', 'view', 'action', 'serve-file', 'export-excel', 'get-pic'],
                         ],
                         [
                             'allow' => false, // Deny access by default

@@ -119,69 +119,6 @@ class m240703_191212_create_inbound_table extends Migration
             'CASCADE',
             'CASCADE'
         );
-        $this->execute("
-    CREATE OR REPLACE FUNCTION inbound_outbound.inbound_log_function()
-    RETURNS TRIGGER AS $$
-    BEGIN
-       -- Access changed attributes using special variables
-       IF (TG_OP = 'INSERT' AND NEW.status = 10) OR 
-          (TG_OP = 'UPDATE' AND OLD.status IS DISTINCT FROM NEW.status)
-       THEN
-           DECLARE
-               old_status INTEGER := CASE WHEN TG_OP = 'UPDATE' THEN OLD.status ELSE 0 END;
-               new_status INTEGER := NEW.status;
-               reason TEXT := NEW.reason;
-               creator TEXT := NEW.temp;
-               log_message TEXT;
-               resubmitted BOOLEAN := FALSE;
-               inserted BOOLEAN := FALSE;
-
-           BEGIN 
-               -- Determine boolean flags based on conditions
-               IF (OLD.status = 7 AND NEW.status = 8) THEN 
-                   resubmitted := TRUE;
-               ELSIF (OLD.status = 16 AND NEW.status = 17) THEN 
-                   resubmitted := TRUE;
-               END IF;
-
-               IF (TG_OP = 'INSERT' AND NEW.status = 10) THEN 
-                   inserted := TRUE;
-               END IF;
-
-               -- Determine if a log message is needed
-               IF resubmitted OR TG_OP = 'INSERT' OR 
-                  NEW.status IN (5, 6, 16, 36)
-               THEN 
-                   -- Build the log message
-                   log_message := CASE 
-                       WHEN inserted THEN 'New Application Submitted' 
-                       WHEN resubmitted THEN 'Application Resubmitted'
-                       ELSE reason 
-                   END;
-
-                   -- Insert into log table 
-                   INSERT INTO inbound_outbound.inbound_log (inbound_id, old_status, new_status, message, created_by)
-                   VALUES (NEW.id, old_status, new_status, log_message, creator);
-               END IF;
-           END;
-       END IF;
-
-       RETURN NEW; 
-    END;
-    $$ LANGUAGE plpgsql;
-");
-// Drop existing trigger if necessary
-        $this->execute("
-    DROP TRIGGER IF EXISTS inboundlog ON inbound_outbound.inbound;
-");
-
-// Create the new trigger
-        $this->execute("
-    CREATE TRIGGER inboundlog
-    AFTER INSERT OR UPDATE ON inbound_outbound.inbound
-    FOR EACH ROW 
-    EXECUTE FUNCTION inbound_outbound.inbound_log_function();
-");
     }
 
     /**

@@ -198,9 +198,12 @@ form .checkbox input{
     height: auto;
 }
 
-.field-inbound-agreement label {
+.field-inbound-agreement {
     display: flex;
     align-items: center;
+}
+.field-inbound-agreement label{
+    margin-bottom: 0 !important;
 }
 .field-inbound-agreement input[type="checkbox"] {
     margin-right: 0.5em; /* Adjust the space between checkbox and text */

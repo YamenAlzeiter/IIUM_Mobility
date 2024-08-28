@@ -62,13 +62,13 @@ $this->title = 'FAQ';
     <?= Html::activeHiddenInput($searchModel, 'type', ['id' => 'faq-type']); ?>
 
 
-        <div class="category" id="inbound" onclick="submitFilter('I')">
-            <p>Inbound</p>
-        </div>
-        <hr>
-        <div class="category" id="outbound" onclick="submitFilter('O')">
-            <p>Outbound</p>
-        </div>
+    <div class="category" id="inbound" onclick="submitFilter('I')">
+        <p>Inbound</p>
+    </div>
+    <hr>
+    <div class="category" id="outbound" onclick="submitFilter('O')">
+        <p>Outbound</p>
+    </div>
 
 
     <?php ActiveForm::end(); ?>

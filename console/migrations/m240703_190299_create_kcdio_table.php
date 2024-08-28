@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%kcdio}}`.
  */
-class m240703_191718_create_kcdio_table extends Migration
+class m240703_190299_create_kcdio_table extends Migration
 {
     /**
      * {@inheritdoc}

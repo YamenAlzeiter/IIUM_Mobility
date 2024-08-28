@@ -9,7 +9,7 @@ $this->title = 'IIUM Mobility';
 <nav>
     <div class="logo">
         <?= Html::a(Html::img(Yii::getAlias('@web') . '/iiumLogo.svg', ['class' => 'logoface']), 'index', ['class' => 'logo']) ?>
-        <a href="http://applicant.iium/" target="_blank"><h2 class="sitename">Mobility Program</h2></a>
+        <a href="/site" target="_blank"><h2 class="sitename">Mobility Program</h2></a>
     </div>
 
     <div class="menu">

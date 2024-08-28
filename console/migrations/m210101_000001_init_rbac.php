@@ -14,8 +14,8 @@ class m210101_000001_init_rbac extends Migration
         // Create roles
         $admin = $auth->createRole('admin');
         $staff = $auth->createRole('staff');
-        $inboundStudent = $auth->createRole('inboundStudent');
-        $outboundStudent = $auth->createRole('outboundStudent');
+        $inboundStudent = $auth->createRole('inbound');
+        $outboundStudent = $auth->createRole('outbound');
         $auth->add($admin);
         $auth->add($staff);
         $auth->add($inboundStudent);

@@ -284,6 +284,27 @@ $addCourses = new addInboundCourses()
                         'id' => 'room']) ?>
             </div>
         </div>
+
+        <?php
+        $script = <<< JS
+$('#campus').on('change', function() {
+    var campus = $(this).val();
+    var roomDropdown = $('#room');
+    
+    if (campus === "Kuantan Campus, IIUM Kuantan") {
+        roomDropdown.html('<option value="">Select Room Type</option>' +
+            '<option value="Quad Room – RM165/Month">Quad Room – RM165/Month</option>' +
+            '<option value="Single PG Room – RM360/Month">Single PG Room – RM360/Month</option>');
+    } else {
+        roomDropdown.html('<option value="">Select Room Type</option>' +
+            '<option value="Quad Room – RM165/Month">Quad Room – RM165/Month</option>' +
+            '<option value="Single PG Room – RM360/Month">Single PG Room – RM360/Month</option>' +
+            '<option value="Single Executive Room – RM690 + RM50 (Electricity)/Month">Single Executive Room – RM690 + RM50 (Electricity)/Month</option>');
+    }
+});
+JS;
+        $this->registerJs($script);
+        ?>
         <div class = "col-lg">
             <?= $form->field($model, 'financial_funding')
                 ->dropDownList([

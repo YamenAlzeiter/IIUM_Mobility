@@ -67,13 +67,13 @@ class UserController extends Controller
         $id = Yii::$app->request->post('id');
         $user = User::findOne($id);
         if ($user) {
-            $user->status = User::STATUS_INACTIVE; // Assuming status 0 is for rejected
-            if ($user->save()) {
+            if ($user->delete()) {
                 return $this->asJson(['success' => true]);
             }
         }
         return $this->asJson(['success' => false]);
     }
+
 
     public function actionUpdate($id)
     {

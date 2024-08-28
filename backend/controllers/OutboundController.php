@@ -407,7 +407,7 @@ class OutboundController extends Controller
                         'link' => $link,
                         'body' => $body,
                     ])
-                ->setFrom(['noReplay@iium.edy.my' => 'IIUM'])
+                ->setFrom(['noReplay@iium.edy.my' => 'IIUM Mobility System'])
                 ->setTo($user->email)
                 ->setSubject($template->subject);
 

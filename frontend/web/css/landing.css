@@ -165,10 +165,9 @@ p {
     border: none;
 }
 
-label {
+.label {
     cursor: pointer;
     text-align: center;
-    padding: 1.3em 2em;
     margin:0;
 
 }

@@ -14,7 +14,7 @@ class m240703_190300_create_pic_table extends Migration
     {
         $this->createTable('{{%pic}}', [
             'id' => $this->primaryKey(),
-            'kcdio_id' => $this->string(),
+            'kcdio_id' => $this->integer(),
             'name' => $this->string(100),
             'email' => $this->string(50),
             'name_cc_x' => $this->string(100),

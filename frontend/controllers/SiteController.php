@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use app\models\Faq;
 use common\models\search\FaqSearch;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
@@ -23,6 +22,7 @@ use frontend\models\ContactForm;
  */
 class SiteController extends Controller
 {
+    public $layout = 'blank';
     /**
      * {@inheritdoc}
      */
@@ -69,6 +69,7 @@ class SiteController extends Controller
             ],
         ];
     }
+
 
     /**
      * Displays homepage.

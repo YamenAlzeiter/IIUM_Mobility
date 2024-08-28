@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\helpers\Variables;
 use Yii;
+use yii\helpers\Html;
 use yii\web\UploadedFile;
 
 /**
@@ -128,6 +129,10 @@ public $pic_id;
      */
     public function rules()
     {
+        $proofSponsorshipId = Html::getInputId($this, 'f_proof_sponsorship');
+        $proofSponsorshipCoverId = Html::getInputId($this, 'f_proof_sponsorship_cover');
+        $letterIndemnityId = Html::getInputId($this, 'f_letter_indemnity');
+        $statusId = Html::getInputId($this, 'status');
         return [
             [
                 [
@@ -153,17 +158,50 @@ public $pic_id;
             [['f_latest_payslip_file'], 'required', 'when' => function($model) {
                 return empty($model->f_latest_payslip);
             }, 'on' => 'creating'],
-
-            [['f_proof_sponsorship_file'], 'required', 'when' => function($model) {
-                return empty($model->f_proof_sponsorship) && $model->status === Variables::redirected_to_student_UPLOAD_files;
-            }, 'on' => 'uploader'],
-            [['f_proof_sponsorship_cover_file'], 'required', 'when' => function($model) {
-                return empty($model->f_proof_sponsorship_cover) && $model->status === Variables::redirected_to_student_UPLOAD_files;
-            }, 'on' => 'uploader'],
-            [['f_letter_indemnity_file'], 'required', 'when' => function($model) {
-                return empty($model->f_letter_indemnity) && $model->status === Variables::redirected_to_student_UPLOAD_files;
-            }, 'on' => 'uploader'],
-
+            [
+                ['f_letter_indemnity_file'],
+                'required',
+                'when' => function($model) {
+                    return empty($model->f_letter_indemnity) &&
+                        ($model->status === Variables::redirected_to_student_UPLOAD_files ||
+                            $model->status === Variables::application_files_not_complete);
+                },
+                'whenClient' => "function (attribute, value) {
+            return $('#outbound-f_letter_indemnity_file').val() == '' && 
+                   ($('#outbound-status').val() == '" . Variables::redirected_to_student_UPLOAD_files . "' || 
+                    $('#outbound-status').val() == '" . Variables::application_files_not_complete . "');
+        }",
+                'on' => 'uploader'
+            ],
+            [
+                ['f_flight_ticket_file'],
+                'required',
+                'when' => function($model) {
+                    return empty($model->f_flight_ticket) &&
+                        ($model->status === Variables::redirected_to_student_UPLOAD_files ||
+                            $model->status === Variables::application_files_not_complete);
+                },
+                'whenClient' => "function (attribute, value) {
+            return $('#outbound-f_flight_ticket_file').val() == '' && 
+                   ($('#outbound-status').val() == '" . Variables::redirected_to_student_UPLOAD_files . "' || 
+                    $('#outbound-status').val() == '" . Variables::application_files_not_complete . "');
+        }",
+                'on' => 'uploader'
+            ],[
+                ['f_travel_insurance_file'],
+                'required',
+                'when' => function($model) {
+                    return empty($model->f_travel_insurance) &&
+                        ($model->status === Variables::redirected_to_student_UPLOAD_files ||
+                            $model->status === Variables::application_files_not_complete);
+                },
+                'whenClient' => "function (attribute, value) {
+            return $('#outbound-f_travel_insurance_file').val() == '' && 
+                   ($('#outbound-status').val() == '" . Variables::redirected_to_student_UPLOAD_files . "' || 
+                    $('#outbound-status').val() == '" . Variables::application_files_not_complete . "');
+        }",
+                'on' => 'uploader'
+            ],
 
             [['f_certificate_attendance_file'], 'required', 'when' => function($model) {
                 return empty($model->f_certificate_attendance) && $model->status === Variables::application_reminder_sent;
@@ -270,7 +308,8 @@ public $pic_id;
             'f_offer_letter_file' => 'f_offer_letter',
             'f_certificate_attendance_file' => 'f_certificate_attendance',
             'f_academic_transcript_host_university_file' => 'f_academic_transcript_host_university',
-            'f_mobility_report_file' => 'f_mobility_report'
+            'f_mobility_report_file' => 'f_mobility_report',
+            'f_travel_insurance_file' => 'f_travel_insurance',
         ];
 
         foreach ($files as $fileAttr => $dbAttr) {

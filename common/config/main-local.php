@@ -7,17 +7,17 @@ return [
         ],
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'pgsql:host=localhost;dbname=moua',
-            'username' => 'postgres',
-            'password' => 'admin',
+            'dsn' => 'pgsql:host=10.101.243.185;port=5432;dbname=postgres',
+            'username' => 'ac_iosys_usr',
+            'password' => 'In0ut_5ys',
             'schemaMap' => [
                 'pgsql'=> [
                     'class'=>'yii\db\pgsql\Schema',
-                    'defaultSchema' => 'inbound_outbound'
+                    'defaultSchema' => 'ac_iosys'
                 ]
             ],
             'on afterOpen' => function($event) {
-                $event->sender->createCommand('SET search_path TO inbound_outbound;')->execute();
+                $event->sender->createCommand('SET search_path TO ac_iosys;')->execute();
             }
         ],
         'mailer' => [

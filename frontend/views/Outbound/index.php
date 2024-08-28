@@ -24,7 +24,12 @@ $view = new ViewRenderer();
 
 ?>
 
-
+<?php if ($model === null): ?>
+    <div class="text-center">
+        <p>You do not have any records yet.</p>
+        <?= Html::a('Create New Record', ['create'], ['class' => 'btn-submit']) ?>
+    </div>
+<?php else: ?>
     <div class="application-header row">
 
         <h2 class="col-lg-12 text-color-dark user-header"><?= Html::encode($model->name) ?></h2>
@@ -327,7 +332,7 @@ $view = new ViewRenderer();
             </div>
         </div>
     </div>
-
+<?php endif;?>
 
 
     <?php

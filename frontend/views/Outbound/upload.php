@@ -13,17 +13,17 @@ $templateFileInput = '<div class="col-md align-items-center"><div class="col-md-
 $form = ActiveForm::begin([
     'id' => 'upload-form',
     'options' => ['enctype' => 'multipart/form-data'],
-    'enableClientValidation' => false,
-    'enableAjaxValidation' => true,
+    'enableClientValidation' => true,
 ]);
-
+echo Html::hiddenInput('status', $model->status, ['id' => 'outbound-status']);
 ?>
+
             <?php if (in_array($model->status, [Variables::redirected_to_student_UPLOAD_files, Variables::application_files_not_complete])):?>
             <?= $form->field($model, 'f_proof_sponsorship_file', ['template' => $templateFileInput])->fileInput()?>
-            <?= $form->field($model, 'f_proof_sponsorship_cover_file', ['template' => $templateFileInput])->fileInput()?>
+<!--            --><?php //= $form->field($model, 'f_proof_sponsorship_cover_file', ['template' => $templateFileInput])->fileInput()?>
             <?= $form->field($model, 'f_letter_indemnity_file', ['template' => $templateFileInput])->fileInput()?>
             <?= $form->field($model, 'f_flight_ticket_file', ['template' => $templateFileInput])->fileInput()?>
-            <?= $form->field($model, 'f_travel_insurance_file')?>
+            <?= $form->field($model, 'f_travel_insurance_file', ['template' => $templateFileInput])->fileInput()?>
             <?php elseif ($model->status == Variables::application_reminder_sent):?>
             <?= $form->field($model, 'f_certificate_attendance_file', ['template' => $templateFileInput])->fileInput()?>
             <?= $form->field($model, 'f_academic_transcript_host_university_file', ['template' => $templateFileInput])->fileInput()?>
@@ -39,3 +39,4 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
+
