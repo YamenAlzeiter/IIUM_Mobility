@@ -104,6 +104,49 @@ p {
     font-size: var(--sub);
 }
 
+/*===== PARALLAX ======*/
+.parallax-container {
+    position: relative;
+    height: 50vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.parallax-images {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Prevent interaction with images */
+}
+
+.parallax-image {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* No transition initially */
+}
+
+.content {
+    position: relative;
+    z-index: 1;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.cta-btn {
+    padding: 1em;
+    font-size: 16px;
+    border: 0;
+    border-radius: 2em;
+    cursor: pointer;
+}
 
 
 /* toolbar styles */

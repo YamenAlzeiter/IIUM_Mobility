@@ -26,7 +26,7 @@ landing::register($this);
 <div class="footer" id="footer">
     <div class="logo">
         <?= Html::a(Html::img(Yii::getAlias('@web') . '/iiumLogo.svg', ['class' => 'logoface']), 'index', ['class' => 'logo']) ?>
-        <a href="/site" target="_blank"><h2 class="sitename reversed">Memorandum Program</h2></a>
+        <a href="/site" target="_blank"><h2 class="sitename reversed">Mobility Program</h2></a>
     </div>
 
     <div class="footer-cols">
